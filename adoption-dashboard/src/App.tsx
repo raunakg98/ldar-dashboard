@@ -23,7 +23,7 @@ const DashboardCards = () => {
       value: "259",
       subtitle: "highest in the last 5 years third month in a row",
       comparison: "+45%",
-      comparisonText: "vs July 2024",
+      comparisonText: "vs July 2024(178)",
       trend: "up",
       icon: Calendar,
       bgColor: "bg-green-50",
@@ -54,8 +54,8 @@ const DashboardCards = () => {
       title: "Animals in Care VA",
       value: "246",
       subtitle: "current snapshot",
-      comparison: "+19%",
-      comparisonText: "vs last week",
+      comparison: "+28%",
+      comparisonText: "vs last week(192)",
       trend: "up",
       icon: MapPin,
       bgColor: "bg-orange-50",
@@ -239,7 +239,7 @@ const DashboardCards = () => {
             <h4 className="text-lg font-semibold text-red-900 mb-3">July's Dramatic Shift</h4>
             <ul className="text-sm text-red-800 space-y-2">
               <li> <strong>Dogs surge to 64.9%:</strong> +17 point jump from June's 47.9%</li>
-              <li> <strong>Cats drop to 35.1%:</strong> Lowest percentage all year</li>
+              <li> <strong>Cats drop to 35.1%</strong> Lower than the usual 50-52%</li>
               <li> <strong>168 vs 91:</strong> Nearly 2:1 dog-to-cat ratio</li>
               <li> <strong>Breaking the pattern:</strong> Highest dog month since early 2024</li>
             </ul>
