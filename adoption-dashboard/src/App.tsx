@@ -89,7 +89,7 @@ const DashboardCards = () => {
     { month: 'Jul', dogs: 168, cats: 91, total: 259, dogPct: 64.9, catPct: 35.1 }
   ];
 
-  const getTrendIcon = (trend, trendColor) => {
+  const getTrendIcon = (trend:string, trendColor:string) => {
     if (trend === 'up') {
       return <TrendingUp className={`h-4 w-4 ${trendColor}`} />;
     } else {
@@ -203,7 +203,7 @@ const DashboardCards = () => {
               <YAxis yAxisId="left" label={{ value: 'Number of Adoptions', angle: -90, position: 'insideLeft' }} />
               <YAxis yAxisId="right" orientation="right" domain={[0, 100]} label={{ value: 'Percentage (%)', angle: 90, position: 'insideRight' }} />
               <Tooltip 
-                formatter={(value, name, props) => {
+                formatter={(value, name) => {
                   if (name === 'dogs' || name === 'cats') {
                     return [`${value} adoptions`, name === 'dogs' ? 'Dogs' : 'Cats'];
                   }
