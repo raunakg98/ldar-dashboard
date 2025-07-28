@@ -1,6 +1,6 @@
-import React from 'react';
-import { TrendingUp, TrendingDown, Users, Heart, Calendar, MapPin } from 'lucide-react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, BarChart, Bar, ResponsiveContainer, ComposedChart } from 'recharts';
+// import React from 'react';
+import { TrendingUp, TrendingDown, Heart, Calendar, MapPin } from 'lucide-react';
+import {  Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Bar, ResponsiveContainer, ComposedChart } from 'recharts';
 
 const DashboardCards = () => {
   // Key metrics data
