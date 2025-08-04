@@ -309,6 +309,10 @@ body {
   }
 }
 
+/* src/index.css */
+@import "tailwindcss";
+
+
 .gap-4 {
   gap: 1rem;
 }
