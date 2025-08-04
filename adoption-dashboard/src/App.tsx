@@ -272,22 +272,22 @@ const DashboardCards = () => {
             {/* All-Time Vaccine Clinic Insights */}
             <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="bg-green-50 p-6 rounded-lg">
-                <h4 className="text-lg font-semibold text-green-900 mb-3">Program Evolution</h4>
+                <h4 className="text-lg font-semibold text-green-900 mb-3">Growth</h4>
                 <ul className="text-sm text-green-800 space-y-2">
-                  <li>Started small: First clinic served 75 animals (Jun 2024)</li>
-                  <li>July 25, 2025: Record 406 animals in one day</li>
-                  <li>Total program impact: 1,343 animals served</li>
-                  <li>Growth trajectory: 441% increase from first to latest clinic</li>
+                <li>• July 25 clinic: 406 animals served in ONE DAY!</li>
+                <li>• 658 vaccines administered (previous record: 298)</li>
+                <li>• 221 microchips placed (highest ever)</li>
+                <li>• 323 people interested (3x normal volume)</li>
                 </ul>
               </div>
               
               <div className="bg-yellow-50 p-6 rounded-lg">
-                <h4 className="text-lg font-semibold text-yellow-900 mb-3">Conversion Challenges</h4>
+                <h4 className="text-lg font-semibold text-yellow-900 mb-3">Evolution</h4>
                 <ul className="text-sm text-yellow-800 space-y-2">
-                  <li>Best conversion: Dec 2024 (74.1% show-up rate)</li>
-                  <li>Lowest conversion: Feb 2025 (14.7%)</li>
-                  <li>Total no-shows: 467 people across all clinics</li>
-                  <li>Summer/fall timing consistently outperforms winter</li>
+                <li>• Total program impact: 1,343 animals served</li>
+                <li>• 1,886 vaccines administered across all clinics</li>
+                <li>• Dogs dominate vaccine clinics (66% vs 34% cats)</li>
+                <li>• Microchip adoption growing rapidly</li>
                 </ul>
               </div>
             </div>
