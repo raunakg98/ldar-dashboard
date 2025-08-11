@@ -59,8 +59,8 @@ const DashboardCards = () => {
       subtitle: (
         <div>
           <div>27 dogs in boarding</div>
-          <div>8 cats at PetSmart</div>
-          <div>19 cats at Meo Maison</div>
+          <div>5 cats at PetSmart</div>
+          <div>22 cats at Meo Maison</div>
         </div>
       ),
       trend: "up",
