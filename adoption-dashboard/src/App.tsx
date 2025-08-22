@@ -29,9 +29,9 @@ const DashboardCards = () => {
   const keyMetrics = [
     {
       title: "YTD Adoptions",
-      value: "1,942",
+      value: "2,004",
       subtitle: "highest in the past 3 years",
-      comparison: "+3%",
+      comparison: "+7%",
       comparisonText: "vs 24 YTD (1871)",
       trend: "up",
       icon: Heart,
@@ -42,8 +42,8 @@ const DashboardCards = () => {
     },
     {
       title: "August 2025",
-      value: "111",
-      subtitle: "projected 280-310",
+      value: "173",
+      subtitle: "projected 250-280",
       comparison: "+139",
       comparisonText: "vs Aug 2024(250)",
       trend: "up",
@@ -55,12 +55,12 @@ const DashboardCards = () => {
     },
     {
       title: "Animals in Foster Care",
-      value: "176",
+      value: "158",
       subtitle: (
         <div>
-          <div>27 dogs in boarding</div>
-          <div>5 cats at PetSmart</div>
-          <div>22 cats at Meo Maison</div>
+          <div>23 dogs in boarding</div>
+          <div>11 cats at PetSmart</div>
+          <div>24 cats at Meo Maison</div>
         </div>
       ),
       trend: "up",
@@ -72,10 +72,10 @@ const DashboardCards = () => {
     },
     {
       title: "Animals in Care VA",
-      value: "231",
+      value: "217",
       subtitle: "current snapshot",
       comparison: "-1%",
-      comparisonText: "vs last week(210)",
+      comparisonText: "vs last week(231)",
       trend: "down",
       icon: MapPin,
       bgColor: "bg-orange-50",
@@ -85,10 +85,10 @@ const DashboardCards = () => {
     },
     {
       title: "Animals in Care SC",
-      value: "74",
+      value: "144",
       subtitle: "current snapshot",
-      comparison: "-39%",
-      comparisonText: "vs last week (119)",
+      comparison: "+49%",
+      comparisonText: "vs last week (74)",
       trend: "down",
       icon: MapPin,
       bgColor: "bg-pink-50",
