@@ -220,7 +220,7 @@ const DashboardCards = () => {
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Adoption Dashboard</h1>
-        <p className="text-lg text-gray-600">Key metrics as of Sunday, August 3, 2025</p>
+        <p className="text-lg text-gray-600">Key metrics as of Sunday, August 17, 2025</p>
       </div>
       
       {/* Key Metrics Cards */}
