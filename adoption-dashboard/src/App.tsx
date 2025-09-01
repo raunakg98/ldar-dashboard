@@ -29,9 +29,9 @@ const DashboardCards = () => {
   const keyMetrics = [
     {
       title: "YTD Adoptions",
-      value: "2,081",
-      subtitle: "highest in the past 3 years",
-      comparison: "+11%",
+      value: "2,135",
+      subtitle: "highest in the last 5 years",
+      comparison: "+14%",
       comparisonText: "vs 24 YTD (1871)",
       trend: "up",
       icon: Heart,
@@ -42,9 +42,9 @@ const DashboardCards = () => {
     },
     {
       title: "August 2025",
-      value: "250",
+      value: "304",
       subtitle: "projected 250-280",
-      comparison: "+0",
+      comparison: "+21%",
       comparisonText: "vs Aug 2024(250)",
       trend: "up",
       icon: Calendar,
@@ -55,12 +55,12 @@ const DashboardCards = () => {
     },
     {
       title: "Animals in Foster Care",
-      value: "176",
+      value: "144",
       subtitle: (
         <div>
-          <div>21 dogs in boarding</div>
-          <div>13 cats at PetSmart</div>
-          <div>17 cats at Meow Maison</div>
+          <div>19 dogs in boarding</div>
+          <div>12 cats at PetSmart</div>
+          <div>18 cats at Meow Maison</div>
         </div>
       ),
       trend: "up",
@@ -72,10 +72,10 @@ const DashboardCards = () => {
     },
     {
       title: "Animals in Care VA",
-      value: "230",
+      value: "195",
       subtitle: "current snapshot",
-      comparison: "+6%",
-      comparisonText: "vs last week(217)",
+      comparison: "-15%",
+      comparisonText: "vs last week(230)",
       trend: "up",
       icon: MapPin,
       bgColor: "bg-orange-50",
@@ -85,10 +85,10 @@ const DashboardCards = () => {
     },
     {
       title: "Animals in Care SC",
-      value: "87",
+      value: "131",
       subtitle: "current snapshot",
-      comparison: "-40%",
-      comparisonText: "vs last week (144)",
+      comparison: "+33%",
+      comparisonText: "vs last week (87)",
       trend: "up",
       icon: MapPin,
       bgColor: "bg-pink-50",
@@ -107,7 +107,7 @@ const DashboardCards = () => {
     { month: 'May', dogs: 136, cats: 148, total: 284, dogPct: 47.9, catPct: 52.1 },
     { month: 'Jun', dogs: 145, cats: 158, total: 303, dogPct: 47.9, catPct: 52.1 },
     { month: 'Jul', dogs: 171, cats: 96, total: 267, dogPct: 66.8, catPct: 33.2 },
-    { month: 'Aug', dogs: 150, cats: 100, total: 250, dogPct: 60, catPct: 40 }
+    { month: 'Aug', dogs: 177, cats: 127, total: 304, dogPct: 58.2, catPct: 41.8 }
   ];
   
   // All-time Vaccine Clinic Data
@@ -161,7 +161,7 @@ const DashboardCards = () => {
     5: { adoptions: 284, days: 31 },
     6: { adoptions: 303, days: 30 },
     7: { adoptions: 267, days: 31 },
-    8: { adoptions: 250, days: 10 } // partial
+    8: { adoptions: 304, days: 31 } // partial
   };
 
   // Predictions (Aug–Dec) — reduced by 10 each previously
@@ -220,7 +220,7 @@ const DashboardCards = () => {
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Adoption Dashboard</h1>
-        <p className="text-lg text-gray-600">Key metrics as of Sunday, August 24, 2025</p>
+        <p className="text-lg text-gray-600">Key metrics as of Sunday, August 31, 2025</p>
       </div>
       
       {/* Key Metrics Cards */}
@@ -302,7 +302,7 @@ const DashboardCards = () => {
                           {d.isAug ? (
                             <>
                               <p className="text-purple-600">Prediction: {AUG_PRED}</p>
-                              <p className="text-blue-600">Partial actual: {d.actual2025}</p>
+                              <p className="text-blue-600">Actual: {d.actual2025}</p>
                             </>
                           ) : d.actual2025 != null ? (
                             <p className="text-blue-600">Actual: {d.actual2025} {d.actual2025 >= d.historical ? '↑ above avg' : '↓ below avg'}</p>
