@@ -29,7 +29,7 @@ const DashboardCards = () => {
   const keyMetrics = [
     {
       title: "YTD Adoptions",
-      value: "2,281",
+      value: "2,284",
       subtitle: "highest in the last 3 years",
       comparison: "+6%",
       comparisonText: "vs 24 YTD (2146)",
@@ -42,7 +42,7 @@ const DashboardCards = () => {
     },
     {
       title: "Sep 2025",
-      value: "83",
+      value: "149",
       subtitle: "projected 245-275",
       comparison: "+21%",
       comparisonText: "vs Aug 2024(275)",
@@ -55,12 +55,12 @@ const DashboardCards = () => {
     },
     {
       title: "Animals in Foster Care",
-      value: "160",
+      value: "145",
       subtitle: (
         <div>
-          <div>13 dogs in boarding</div>
-          <div>4 cats at PetSmart</div>
-          <div>19 cats at Meow Maison</div>
+          <div>18 dogs in boarding</div>
+          <div>12 cats at PetSmart</div>
+          <div>22 cats at Meow Maison</div>
         </div>
       ),
       trend: "up",
@@ -72,10 +72,10 @@ const DashboardCards = () => {
     },
     {
       title: "Animals in Care VA",
-      value: "197",
+      value: "205",
       subtitle: "current snapshot",
-      comparison: "+1%",
-      comparisonText: "vs last week(195)",
+      comparison: "+4%",
+      comparisonText: "vs last week(197)",
       trend: "up",
       icon: MapPin,
       bgColor: "bg-orange-50",
@@ -85,10 +85,10 @@ const DashboardCards = () => {
     },
     {
       title: "Animals in Care SC",
-      value: "76",
+      value: "133",
       subtitle: "current snapshot",
-      comparison: "-42%",
-      comparisonText: "vs last week (131)",
+      comparison: "+42%",
+      comparisonText: "vs last week (76)",
       trend: "up",
       icon: MapPin,
       bgColor: "bg-pink-50",
@@ -108,7 +108,7 @@ const DashboardCards = () => {
     { month: 'Jun', dogs: 145, cats: 158, total: 303, dogPct: 47.9, catPct: 52.1 },
     { month: 'Jul', dogs: 171, cats: 96, total: 267, dogPct: 66.8, catPct: 33.2 },
     { month: 'Aug', dogs: 177, cats: 127, total: 304, dogPct: 58.2, catPct: 41.8 },
-    { month: 'Sep', dogs: 51, cats: 32, total: 83, dogPct: 61.4, catPct: 38.6 }
+    { month: 'Sep', dogs: 83, cats: 66, total: 149, dogPct: 55.7, catPct: 44.3 }
   ];
   
   // All-time Vaccine Clinic Data
@@ -162,7 +162,8 @@ const DashboardCards = () => {
     5: { adoptions: 284, days: 31 },
     6: { adoptions: 303, days: 30 },
     7: { adoptions: 267, days: 31 },
-    8: { adoptions: 304, days: 31 } // partial
+    8: { adoptions: 304, days: 31 },
+    9: { adoptions: 149, days: 31 } // partial
   };
 
   // Predictions (Aug–Dec) — reduced by 10 each previously
