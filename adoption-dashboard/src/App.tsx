@@ -162,8 +162,7 @@ const DashboardCards = () => {
     5: { adoptions: 284, days: 31 },
     6: { adoptions: 303, days: 30 },
     7: { adoptions: 267, days: 31 },
-    8: { adoptions: 304, days: 31 },
-    9: { adoptions: 149, days: 31 } // partial
+    8: { adoptions: 304, days: 31 } // partial
   };
 
   // Predictions (Aug–Dec) — reduced by 10 each previously
