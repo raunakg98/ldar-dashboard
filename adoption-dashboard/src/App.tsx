@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import * as Papa from 'papaparse';
+import type { ParseResult } from 'papaparse';
 import { TrendingUp, TrendingDown, Heart, Calendar, MapPin, ChevronLeft, ChevronRight } from 'lucide-react';
 import {
   Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Bar,
@@ -81,7 +82,7 @@ const DashboardCards = () => {
       header: true,
       dynamicTyping: false,
       skipEmptyLines: true,
-      complete: (res) => {
+      complete: (res: ParseResult<SpeciesRow>) => {
         const rows = (res.data as SpeciesRow[]).filter(r => r['Adoption Date'] && r.Species);
         setSpeciesRows(rows);
         setCsvLoaded(true);
@@ -261,8 +262,8 @@ const DashboardCards = () => {
   };
   const AUG_PRED = 299, SEP_PRED = 291, OCT_PRED = 218, NOV_PRED = 222, DEC_PRED = 286;
   const BAND_HALF_WIDTH = 50;
-  const PEAK_RANGES: [string, string][] = [['May','Jun'], ['Aug','Sep']];
-  const DIP_RANGES:  [string, string][] = [['Feb','Mar'], ['Oct','Nov']];
+  // const PEAK_RANGES: [string, string][] = [['May','Jun'], ['Aug','Sep']];
+  // const DIP_RANGES:  [string, string][] = [['Feb','Mar'], ['Oct','Nov']];
   const PRED_BY_MONTH: Record<string, number> = { Aug: AUG_PRED, Sep: SEP_PRED, Oct: OCT_PRED, Nov: NOV_PRED, Dec: DEC_PRED };
   const peakPredMonth = Object.entries(PRED_BY_MONTH).reduce((a,b)=> a[1] > b[1] ? a : b)[0];
   const dipPredMonth  = Object.entries(PRED_BY_MONTH).reduce((a,b)=> a[1] < b[1] ? a : b)[0];
