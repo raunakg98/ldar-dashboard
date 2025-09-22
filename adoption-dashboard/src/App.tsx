@@ -7,8 +7,9 @@ import {
 } from 'recharts';
 
 const DashboardCards = () => {
-  // Visualization configurations (ORDER: 1) Predictions 2) Monthly Adoptions 3) Vaccine Clinics)
+  // Visualization configurations (ORDER: 1) YTD Species 2) Predictions 3) Monthly Adoptions 4) Vaccine Clinics)
   const visualizations = [
+    { id: 'ytdSpecies', title: 'YTD Adoptions by Species', subtitle: 'Dogs vs Cats • 2021–2025' },
     { id: 'predictions', title: 'Seasonality & 2025 Predictions', subtitle: 'Avg-centered bands • Aug–Dec forecast' },
     { id: 'adoptions', title: 'Monthly Adoptions Breakdown', subtitle: '2025 Cats vs Dogs Trends' },
     { id: 'vaccines', title: 'Vaccine Clinics Performance', subtitle: 'All-Time Analysis' }
@@ -97,7 +98,26 @@ const DashboardCards = () => {
       trendColor: "text-green-600"
     }
   ];
-  
+
+  // YTD adoptions from 2021 by species
+  const ytdSpeciesData = [
+    { year: '2021', dogs: 1277, cats: 573 },
+    { year: '2022', dogs: 1354, cats: 721 },
+    { year: '2023', dogs: 1156, cats: 858 },
+    { year: '2024', dogs: 835,  cats: 786 },
+    { year: '2025', dogs: 883,  cats: 948 }
+  ];
+
+  // Enrich for chart (total and dog share)
+  const ytdSpeciesEnriched = useMemo(() => {
+    return ytdSpeciesData.map(d => {
+      const total = d.dogs + d.cats;
+      const dogPct = total ? +(100 * d.dogs / total).toFixed(1) : 0;
+      const catPct = total ? +(100 * d.cats / total).toFixed(1) : 0;
+      return { ...d, total, dogPct, catPct, isCurrent: d.year === '2025' };
+    });
+  }, []);
+
   // 2025 Monthly breakdown cats vs dogs
   const monthly2025CatsVsDogs = [
     { month: 'Jan', dogs: 130, cats: 140, total: 270, dogPct: 48.1, catPct: 51.9 },
@@ -106,9 +126,9 @@ const DashboardCards = () => {
     { month: 'Apr', dogs: 104, cats: 113, total: 217, dogPct: 47.9, catPct: 52.1 },
     { month: 'May', dogs: 136, cats: 148, total: 284, dogPct: 47.9, catPct: 52.1 },
     { month: 'Jun', dogs: 145, cats: 158, total: 303, dogPct: 47.9, catPct: 52.1 },
-    { month: 'Jul', dogs: 171, cats: 96, total: 267, dogPct: 66.8, catPct: 33.2 },
+    { month: 'Jul', dogs: 171, cats: 96,  total: 267, dogPct: 66.8, catPct: 33.2 },
     { month: 'Aug', dogs: 177, cats: 127, total: 304, dogPct: 58.2, catPct: 41.8 },
-    { month: 'Sep', dogs: 83, cats: 66, total: 149, dogPct: 55.7, catPct: 44.3 }
+    { month: 'Sep', dogs: 83,  cats: 66,  total: 149, dogPct: 55.7, catPct: 44.3 }
   ];
   
   // All-time Vaccine Clinic Data
@@ -137,7 +157,6 @@ const DashboardCards = () => {
   };
 
   // ===== Seasonality & 2025 Predictions (Predictions tab) =====
-  // Historical averages (band center) from your 2017–2024 data
   const HIST = [
     { m: 1,  avg: 216.0 },
     { m: 2,  avg: 172.75 },
@@ -153,7 +172,6 @@ const DashboardCards = () => {
     { m:12,  avg: 208.875 }
   ];
 
-  // 2025 actuals (through Aug 10)
   const ACTUAL_2025: Record<number, {adoptions:number, days:number}> = {
     1: { adoptions: 270, days: 31 },
     2: { adoptions: 211, days: 28 },
@@ -162,7 +180,7 @@ const DashboardCards = () => {
     5: { adoptions: 284, days: 31 },
     6: { adoptions: 303, days: 30 },
     7: { adoptions: 267, days: 31 },
-    8: { adoptions: 304, days: 31 } // partial
+    8: { adoptions: 304, days: 31 }
   };
 
   // Predictions (Aug–Dec) — reduced by 10 each previously
@@ -206,9 +224,9 @@ const DashboardCards = () => {
 
       return {
         month: MONTHS[idx],
-        historical: Math.round(h.avg),     // band center (avg)
-        actual2025: actual,                // blue bar (Jan–Aug partial)
-        line2025: actualOrPred,            // purple line (Jan–Jul actuals, Aug–Dec predictions)
+        historical: Math.round(h.avg),
+        actual2025: actual,
+        line2025: actualOrPred,
         bandTop,
         bandBottom,
         isAug: m === 8
@@ -273,7 +291,38 @@ const DashboardCards = () => {
           </button>
         </div>
 
-        {/* 1) Seasonality & Predictions */}
+        {/* 1) YTD Adoptions by Species (since 2021) */}
+        {currentViz.id === 'ytdSpecies' && (
+          <div className="bg-gray-50 p-6 rounded-lg">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">YTD Adoptions by Species (2021–2025)</h3>
+            <ResponsiveContainer width="100%" height={420}>
+              <ComposedChart data={ytdSpeciesEnriched}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="year" />
+                <YAxis yAxisId="left" label={{ value: 'Adoptions', angle: -90, position: 'insideLeft' }} />
+                <YAxis yAxisId="right" orientation="right" domain={[0, 100]} label={{ value: 'Dog Share (%)', angle: 90, position: 'insideRight' }} />
+                <Tooltip
+                  formatter={(value, name) => {
+                    if (name === 'dogs' || name === 'cats') return [`${value} adoptions`, name === 'dogs' ? 'Dogs' : 'Cats'];
+                    if (name === 'total') return [`${value} adoptions`, 'Total'];
+                    if (name === 'dogPct') return [`${value}%`, 'Dog % of Total'];
+                    return [value, name];
+                  }}
+                />
+                <Legend />
+                <Bar yAxisId="left" dataKey="dogs" name="Dogs" fill="#3b82f6" />
+                <Bar yAxisId="left" dataKey="cats" name="Cats" fill="#10b981" />
+                <Line yAxisId="left" type="monotone" dataKey="total" name="Total" stroke="#6b7280" strokeWidth={2} />
+                <Line yAxisId="right" type="monotone" dataKey="dogPct" name="Dog % (right)" stroke="#ef4444" strokeWidth={2} strokeDasharray="4 4" />
+              </ComposedChart>
+            </ResponsiveContainer>
+            <div className="text-xs text-gray-600 mt-3">
+              Bars show YTD adoptions for Dogs and Cats; gray line shows the combined total. Red dashed line shows Dogs as a % of total adoptions.
+            </div>
+          </div>
+        )}
+
+        {/* 2) Seasonality & Predictions */}
         {currentViz.id === 'predictions' && (
           <div className="bg-gray-50 p-6 rounded-lg">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Historical Seasonality & 2025 Actual/Prediction</h3>
@@ -363,7 +412,7 @@ const DashboardCards = () => {
           </div>
         )}
 
-        {/* 2) Monthly Adoptions Visualization */}
+        {/* 3) Monthly Adoptions Visualization */}
         {currentViz.id === 'adoptions' && (
           <div>
             <div className="bg-gray-50 p-6 rounded-lg">
@@ -415,7 +464,7 @@ const DashboardCards = () => {
           </div>
         )}
 
-        {/* 3) Vaccine Clinics Visualization */}
+        {/* 4) Vaccine Clinics Visualization */}
         {currentViz.id === 'vaccines' && (
           <div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
