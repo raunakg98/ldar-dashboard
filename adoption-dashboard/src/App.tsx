@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import * as Papa from 'papaparse';
-import type { ParseResult } from 'papaparse';
+import Papa, { ParseResult } from 'papaparse';
 import { TrendingUp, TrendingDown, Heart, Calendar, MapPin, ChevronLeft, ChevronRight } from 'lucide-react';
 import {
   Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Bar,
@@ -88,7 +87,7 @@ const DashboardCards = () => {
         setCsvLoaded(true);
       },
       error: () => setCsvLoaded(true),
-    });
+  });
   }, []);
 
   const reportDate = useMemo(() => new Date(), []);
