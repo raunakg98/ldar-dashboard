@@ -69,6 +69,15 @@ function computeYTDBySpecies(rows: SpeciesRow[], now: Date = new Date()): YTDPoi
   }));
 }
 
+/** ---------- NEW: Manual YTD totals (2021→2025) for the totals line ---------- */
+const MANUAL_TOTALS: Record<string, number> = {
+  '2021': 2725,
+  '2022': 3109,
+  '2023': 2814,
+  '2024': 2795,
+  '2025': 2346,
+};
+
 const DashboardCards = () => {
   // =========================
   // Data: YTD by species CSV
@@ -88,7 +97,7 @@ const DashboardCards = () => {
         setCsvLoaded(true);
       },
       error: () => setCsvLoaded(true),
-  });
+    });
   }, []);
 
   const reportDate = useMemo(() => new Date(), []);
@@ -97,11 +106,22 @@ const DashboardCards = () => {
     [speciesRows, reportDate]
   );
 
+  /** ---------- NEW: Merge totals for chart ---------- */
+  type ChartYTDPoint = YTDPoint & { total: number };
+  const ytdSpeciesForChart: ChartYTDPoint[] = useMemo(
+    () =>
+      ytdSpeciesData.map((p) => ({
+        ...p,
+        total: MANUAL_TOTALS[p.year] ?? (p.dogs + p.cats),
+      })),
+    [ytdSpeciesData]
+  );
+
   // Latest/previous YTD totals (for card)
-  const latest = ytdSpeciesData.at(-1);
-  const prev = ytdSpeciesData.length >= 2 ? ytdSpeciesData[ytdSpeciesData.length - 2] : undefined;
-  const ytdTotal = latest ? latest.dogs + latest.cats : undefined;
-  const ytdPrevTotal = prev ? prev.dogs + prev.cats : undefined;
+  const latest = ytdSpeciesForChart.at(-1);
+  const prev = ytdSpeciesForChart.length >= 2 ? ytdSpeciesForChart[ytdSpeciesForChart.length - 2] : undefined;
+  const ytdTotal = latest ? latest.total : undefined;
+  const ytdPrevTotal = prev ? prev.total : undefined;
   const ytdPctVsPrev =
     ytdTotal != null && ytdPrevTotal
       ? Math.round(((ytdTotal - ytdPrevTotal) / ytdPrevTotal) * 100)
@@ -114,7 +134,7 @@ const DashboardCards = () => {
   // Visualization configurations (ORDER)
   // =======================================
   const visualizations = [
-    { id: 'speciesYTD', title: 'YTD Adoptions by Species', subtitle: 'Dogs vs Cats • 2021–Present (dynamic)' },
+    { id: 'speciesYTD', title: 'YTD Adoptions by Species', subtitle: 'Dogs vs Cats • 2021–Present (dynamic) + Totals' },
     { id: 'predictions', title: 'Seasonality & 2025 Predictions', subtitle: 'Avg-centered bands • Aug–Dec forecast' },
     { id: 'adoptions', title: 'Monthly Adoptions Breakdown', subtitle: '2025 Cats vs Dogs Trends' },
     { id: 'vaccines', title: 'Vaccine Clinics Performance', subtitle: 'All-Time Analysis' }
@@ -211,7 +231,7 @@ const DashboardCards = () => {
     { month: 'Jun', dogs: 145, cats: 158, total: 303, dogPct: 47.9, catPct: 52.1 },
     { month: 'Jul', dogs: 171, cats: 96,  total: 267, dogPct: 66.8, catPct: 33.2 },
     { month: 'Aug', dogs: 177, cats: 127, total: 304, dogPct: 58.2, catPct: 41.8 },
-    { month: 'Sep', dogs: 83,  cats: 66,  total: 149, dogPct: 55.7, catPct: 44.3 }
+    { month: 'Sep', dogs: 119,  cats: 92,  total: 211, dogPct: 56.3, catPct: 43.6 }
   ];
 
   // ===== Vaccine Clinics (kept) =====
@@ -262,8 +282,6 @@ const DashboardCards = () => {
   };
   const AUG_PRED = 299, SEP_PRED = 291, OCT_PRED = 218, NOV_PRED = 222, DEC_PRED = 286;
   const BAND_HALF_WIDTH = 50;
-  // const PEAK_RANGES: [string, string][] = [['May','Jun'], ['Aug','Sep']];
-  // const DIP_RANGES:  [string, string][] = [['Feb','Mar'], ['Oct','Nov']];
   const PRED_BY_MONTH: Record<string, number> = { Aug: AUG_PRED, Sep: SEP_PRED, Oct: OCT_PRED, Nov: NOV_PRED, Dec: DEC_PRED };
   const peakPredMonth = Object.entries(PRED_BY_MONTH).reduce((a,b)=> a[1] > b[1] ? a : b)[0];
   const dipPredMonth  = Object.entries(PRED_BY_MONTH).reduce((a,b)=> a[1] < b[1] ? a : b)[0];
@@ -361,25 +379,41 @@ const DashboardCards = () => {
           <div className="bg-gray-50 p-6 rounded-lg">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">YTD Adoptions by Species (Dynamic)</h3>
             <ResponsiveContainer width="100%" height={420}>
-              <ComposedChart data={ytdSpeciesData}>
+              <ComposedChart data={ytdSpeciesForChart}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="year" />
                 <YAxis />
                 <Tooltip
-                  formatter={(v: any, name: any, ctx: any) => {
-                    const total = (ctx?.payload?.dogs ?? 0) + (ctx?.payload?.cats ?? 0);
-                    return [`${v} adoptions`, name === 'dogs' ? 'Dogs' : 'Cats', `Total: ${formatInt(total)}`];
+                  formatter={(value: any, name: string) => {
+                    const label =
+                      name === 'dogs' ? 'Dogs' :
+                      name === 'cats' ? 'Cats' :
+                      name === 'total' ? 'Total' : name;
+                    return [`${value} adoptions`, label];
                   }}
                 />
                 <Legend />
                 {latestYear && <ReferenceLine x={latestYear} stroke="#e5e7eb" strokeWidth={2} />}
+
+                {/* NEW Totals line */}
+                <Line
+                  type="monotone"
+                  dataKey="total"
+                  stroke="#6b7280"
+                  strokeWidth={3}
+                  strokeDasharray="4 4"
+                  dot={{ r: 4 }}
+                  activeDot={{ r: 6 }}
+                  name="Total"
+                />
+                {/* Existing species lines */}
                 <Line type="monotone" dataKey="dogs" stroke="#3b82f6" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} name="Dogs" />
                 <Line type="monotone" dataKey="cats" stroke="#10b981" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} name="Cats" />
               </ComposedChart>
             </ResponsiveContainer>
             <div className="text-xs text-gray-600 mt-3">
-              <span className="font-semibold">YTD rule:</span> counts include adoptions through <strong>{cutoffLabel}</strong> of each year.
-              {csvLoaded && ytdSpeciesData.length === 0 && (
+              <span className="font-semibold">YTD rule:</span> counts include adoptions through <strong>{cutoffLabel}</strong> of each year. Totals line uses provided figures when available; otherwise Dogs+Cats.
+              {csvLoaded && ytdSpeciesForChart.length === 0 && (
                 <span className="ml-2 text-red-600">No rows parsed — check CSV path/headers (“Adoption Date”, “Species”).</span>
               )}
             </div>
