@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
-import Papa, { ParseResult } from 'papaparse';
+import Papa from 'papaparse';
+import type { ParseResult } from 'papaparse';
 import { TrendingUp, TrendingDown, Heart, Calendar, MapPin, ChevronLeft, ChevronRight } from 'lucide-react';
 import {
   Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Bar,
