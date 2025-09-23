@@ -242,9 +242,9 @@ const DashboardCards = () => {
     { name: 'FVRCP',        value: 122, color: '#3b82f6' },
     { name: 'Rabies Cat',   value: 103, color: '#f59e0b' }
   ];
-  const getTrendIcon = (trend: string, trendColor: string) => (
-    trend === 'up' ? <TrendingUp className={`h-4 w-4 ${trendColor}`} /> : <TrendingDown className={`h-4 w-4 ${trendColor}`} />
-  );
+  // const getTrendIcon = (trend: string, trendColor: string) => (
+    // trend === 'up' ? <TrendingUp className={`h-4 w-4 ${trendColor}`} /> : <TrendingDown className={`h-4 w-4 ${trendColor}`} />
+  // );
 
   // ===== Seasonality & 2025 Predictions (kept) =====
   const HIST = [
