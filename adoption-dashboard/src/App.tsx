@@ -10,7 +10,7 @@ import {
 
 type SpeciesRow = {
   ['Adoption Date']: string; // e.g., "2025-08-15"
-  Species: string;           // "Dog" | "Cat" (any casing is handled)
+  Species: string;           // "Dog" | "Cat"
 };
 
 type YTDPoint = { year: string; dogs: number; cats: number };
@@ -19,27 +19,19 @@ function formatInt(n: number | undefined) {
   if (n == null || Number.isNaN(n)) return '—';
   return n.toLocaleString();
 }
-
-function toYear(d: Date) {
-  return d.getFullYear();
-}
-
-/** Return an array of year strings from startYear..endYear (inclusive). */
+function toYear(d: Date) { return d.getFullYear(); }
 function rangeYears(startYear: number, endYear: number): string[] {
   const out: string[] = [];
   for (let y = startYear; y <= endYear; y++) out.push(String(y));
   return out;
 }
 
-/** Compute YTD-by-species with the same cutoff (today’s month/day) for every year.
- *  Pads missing species with 0 and ensures all years 2021..currentYear appear.
- */
+/** Compute YTD-by-species with the same cutoff (today’s month/day) for every year. */
 function computeYTDBySpecies(rows: SpeciesRow[], now: Date = new Date()): YTDPoint[] {
   const cutoffMonth = now.getMonth() + 1; // 1..12
   const cutoffDay = now.getDate();        // 1..31
   const currentYear = toYear(now);
 
-  // aggregate by year/species
   const agg: Record<string, { dogs: number; cats: number }> = {};
 
   for (const r of rows) {
@@ -59,9 +51,7 @@ function computeYTDBySpecies(rows: SpeciesRow[], now: Date = new Date()): YTDPoi
     if (sp === 'cat') agg[y].cats += 1;
   }
 
-  // Always show 2021..currentYear, padding missing with 0
   const yearsToShow = rangeYears(2021, currentYear);
-
   return yearsToShow.map((y) => ({
     year: y,
     dogs: agg[y]?.dogs ?? 0,
@@ -69,7 +59,7 @@ function computeYTDBySpecies(rows: SpeciesRow[], now: Date = new Date()): YTDPoi
   }));
 }
 
-/** ---------- NEW: Manual YTD totals (2021→2025) for the totals line ---------- */
+/** Manual full-year totals (for the chart’s “Total” line only; the YTD card ignores these) */
 const MANUAL_TOTALS: Record<string, number> = {
   '2021': 2725,
   '2022': 3109,
@@ -79,9 +69,7 @@ const MANUAL_TOTALS: Record<string, number> = {
 };
 
 const DashboardCards = () => {
-  // =========================
-  // Data: YTD by species CSV
-  // =========================
+  // ===== Load CSV for YTD by species =====
   const [speciesRows, setSpeciesRows] = useState<SpeciesRow[]>([]);
   const [csvLoaded, setCsvLoaded] = useState(false);
 
@@ -106,7 +94,7 @@ const DashboardCards = () => {
     [speciesRows, reportDate]
   );
 
-  /** ---------- NEW: Merge totals for chart ---------- */
+  /** Build the first chart dataset with a totals series (chart only). */
   type ChartYTDPoint = YTDPoint & { total: number };
   const ytdSpeciesForChart: ChartYTDPoint[] = useMemo(
     () =>
@@ -117,45 +105,48 @@ const DashboardCards = () => {
     [ytdSpeciesData]
   );
 
-  // Latest/previous YTD totals (for card)
-  const latest = ytdSpeciesForChart.at(-1);
-  const prev = ytdSpeciesForChart.length >= 2 ? ytdSpeciesForChart[ytdSpeciesForChart.length - 2] : undefined;
-  const ytdTotal = latest ? latest.total : undefined;
-  const ytdPrevTotal = prev ? prev.total : undefined;
+  /** === YTD metric card numbers ===
+   * Use ONLY spreadsheet YTD counts with same cutoff for current year and 2024.
+   */
+  const currentYearStr = String(reportDate.getFullYear());
+  const prevYearStr = String(reportDate.getFullYear() - 1); // 2024 for 2025
+
+  const findYTD = (year: string) => {
+    const row = ytdSpeciesData.find(p => p.year === year);
+    return row ? row.dogs + row.cats : undefined;
+  };
+
+  const ytdCurrent = findYTD(currentYearStr);
+  const ytdPrev = findYTD(prevYearStr);
+
   const ytdPctVsPrev =
-    ytdTotal != null && ytdPrevTotal
-      ? Math.round(((ytdTotal - ytdPrevTotal) / ytdPrevTotal) * 100)
+    ytdCurrent != null && ytdPrev
+      ? Math.round(((ytdCurrent - ytdPrev) / ytdPrev) * 100)
       : undefined;
 
   const cutoffLabel = reportDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
-  const latestYear = latest?.year ?? '';
+  const latestYear = currentYearStr;
 
-  // =======================================
-  // Visualization configurations (ORDER)
-  // =======================================
+  // ===== Visualizations order =====
   const visualizations = [
     { id: 'speciesYTD', title: 'YTD Adoptions by Species', subtitle: 'Dogs vs Cats • 2021–Present (dynamic) + Totals' },
     { id: 'predictions', title: 'Seasonality & 2025 Predictions', subtitle: 'Avg-centered bands • Aug–Dec forecast' },
     { id: 'adoptions', title: 'Monthly Adoptions Breakdown', subtitle: '2025 Cats vs Dogs Trends' },
     { id: 'vaccines', title: 'Vaccine Clinics Performance', subtitle: 'All-Time Analysis' }
   ];
-  
   const [currentVizIndex, setCurrentVizIndex] = useState(0);
   const currentViz = visualizations[currentVizIndex];
-
   const goToPrevious = () => setCurrentVizIndex((prev) => (prev === 0 ? visualizations.length - 1 : prev - 1));
   const goToNext = () => setCurrentVizIndex((prev) => (prev === visualizations.length - 1 ? 0 : prev + 1));
 
-  // =========================
-  // Key metrics (dynamic YTD)
-  // =========================
+  // ===== Key metrics (YTD card fixed) =====
   const keyMetrics = [
     {
       title: "YTD Adoptions",
-      value: formatInt(ytdTotal),
+      value: formatInt(ytdCurrent),
       subtitle: `through ${cutoffLabel}`,
       comparison: ytdPctVsPrev != null ? `${ytdPctVsPrev > 0 ? '+' : ''}${ytdPctVsPrev}%` : undefined,
-      comparisonText: ytdPrevTotal != null ? `vs ${prev?.year} YTD (${formatInt(ytdPrevTotal)})` : undefined,
+      comparisonText: ytdPrev != null ? `vs ${prevYearStr} YTD (${formatInt(ytdPrev)})` : undefined,
       trend: ytdPctVsPrev != null ? (ytdPctVsPrev >= 0 ? 'up' : 'down') : 'up',
       icon: Heart,
       bgColor: "bg-blue-50",
@@ -231,7 +222,7 @@ const DashboardCards = () => {
     { month: 'Jun', dogs: 145, cats: 158, total: 303, dogPct: 47.9, catPct: 52.1 },
     { month: 'Jul', dogs: 171, cats: 96,  total: 267, dogPct: 66.8, catPct: 33.2 },
     { month: 'Aug', dogs: 177, cats: 127, total: 304, dogPct: 58.2, catPct: 41.8 },
-    { month: 'Sep', dogs: 119,  cats: 92,  total: 211, dogPct: 56.3, catPct: 43.6 }
+    { month: 'Sep', dogs: 83,  cats: 66,  total: 149, dogPct: 55.7, catPct: 44.3 }
   ];
 
   // ===== Vaccine Clinics (kept) =====
@@ -257,18 +248,9 @@ const DashboardCards = () => {
 
   // ===== Seasonality & 2025 Predictions (kept) =====
   const HIST = [
-    { m: 1,  avg: 216.0 },
-    { m: 2,  avg: 172.75 },
-    { m: 3,  avg: 199.125 },
-    { m: 4,  avg: 197.125 },
-    { m: 5,  avg: 213.875 },
-    { m: 6,  avg: 213.625 },
-    { m: 7,  avg: 190.625 },
-    { m: 8,  avg: 215.75 },
-    { m: 9,  avg: 225.25 },
-    { m:10,  avg: 189.5 },
-    { m:11,  avg: 176.75 },
-    { m:12,  avg: 208.875 }
+    { m: 1,  avg: 216.0 }, { m: 2,  avg: 172.75 }, { m: 3,  avg: 199.125 }, { m: 4,  avg: 197.125 },
+    { m: 5,  avg: 213.875 }, { m: 6,  avg: 213.625 }, { m: 7,  avg: 190.625 }, { m: 8,  avg: 215.75 },
+    { m: 9,  avg: 225.25 }, { m:10,  avg: 189.5 },   { m:11,  avg: 176.75 },  { m:12,  avg: 208.875 }
   ];
   const ACTUAL_2025: Record<number, {adoptions:number, days:number}> = {
     1: { adoptions: 270, days: 31 },
@@ -291,7 +273,6 @@ const DashboardCards = () => {
     return HIST.map((h, idx) => {
       const m = h.m;
       const actual = ACTUAL_2025[m]?.adoptions ?? null;
-
       const bandBottom = Math.max(0, Math.round(h.avg - BAND_HALF_WIDTH));
       const bandTop    = Math.round(h.avg + BAND_HALF_WIDTH);
 
@@ -341,7 +322,14 @@ const DashboardCards = () => {
               </div>
               {metric.comparison && (
                 <div className="flex items-center space-x-1">
-                  {getTrendIcon(metric.trend, metric.trendColor)}
+                  {metric.trend && (
+                    <>
+                      {metric.trend === 'up'
+                        ? <TrendingUp className={`h-4 w-4 ${metric.trendColor}`} />
+                        : <TrendingDown className={`h-4 w-4 ${metric.trendColor}`} />
+                      }
+                    </>
+                  )}
                   <span className={`text-sm font-medium ${metric.trendColor}`}>{metric.comparison}</span>
                   <span className="text-xs text-gray-500">{metric.comparisonText}</span>
                 </div>
@@ -395,7 +383,7 @@ const DashboardCards = () => {
                 <Legend />
                 {latestYear && <ReferenceLine x={latestYear} stroke="#e5e7eb" strokeWidth={2} />}
 
-                {/* NEW Totals line */}
+                {/* Totals (chart-only) */}
                 <Line
                   type="monotone"
                   dataKey="total"
@@ -406,13 +394,13 @@ const DashboardCards = () => {
                   activeDot={{ r: 6 }}
                   name="Total"
                 />
-                {/* Existing species lines */}
+                {/* Species lines */}
                 <Line type="monotone" dataKey="dogs" stroke="#3b82f6" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} name="Dogs" />
                 <Line type="monotone" dataKey="cats" stroke="#10b981" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} name="Cats" />
               </ComposedChart>
             </ResponsiveContainer>
             <div className="text-xs text-gray-600 mt-3">
-              <span className="font-semibold">YTD rule:</span> counts include adoptions through <strong>{cutoffLabel}</strong> of each year. Totals line uses provided figures when available; otherwise Dogs+Cats.
+              <span className="font-semibold">YTD rule:</span> counts include adoptions through <strong>{cutoffLabel}</strong> of each year.
               {csvLoaded && ytdSpeciesForChart.length === 0 && (
                 <span className="ml-2 text-red-600">No rows parsed — check CSV path/headers (“Adoption Date”, “Species”).</span>
               )}
