@@ -408,7 +408,7 @@ const DashboardCards = () => {
               </ComposedChart>
             </ResponsiveContainer>
             <div className="text-xs text-gray-600 mt-3">
-              <span className="font-semibold">Data rule:</span> YTD = adoptions through <strong>{cutoffLabel}</strong> of each year. “Total (YTD)” = Dogs(YTD)+Cats(YTD). Source: CSV.
+              <span className="font-semibold">Data rule:</span> YTD = adoptions through <strong>{cutoffLabel}</strong> of each year.
               {csvLoaded && ytdSpeciesForChart.length === 0 && (
                 <span className="ml-2 text-red-600">No rows parsed — check CSV path/headers (“Adoption Date”, “Species”).</span>
               )}
