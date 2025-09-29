@@ -164,11 +164,11 @@ const DashboardCards = () => {
     },
     {
       title: "Sep 2025",
-      value: "211",
+      value: "253",
       subtitle: "projected 245-275",
-      comparison: "-23%",
+      comparison: "-8%",
       comparisonText: "vs Sep 2024(275)",
-      trend: "up",
+      trend: "down",
       icon: Calendar,
       bgColor: "bg-green-50",
       textColor: "text-green-900",
@@ -194,10 +194,10 @@ const DashboardCards = () => {
     },
     {
       title: "Animals in Care VA",
-      value: "209",
+      value: "231",
       subtitle: "current snapshot",
-      comparison: "+1%",
-      comparisonText: "vs last week(205)",
+      comparison: "+10%",
+      comparisonText: "vs last week(209)",
       trend: "up",
       icon: MapPin,
       bgColor: "bg-orange-50",
@@ -207,10 +207,10 @@ const DashboardCards = () => {
     },
     {
       title: "Animals in Care SC",
-      value: "137",
+      value: "141",
       subtitle: "current snapshot",
-      comparison: "+3%",
-      comparisonText: "vs last week (133)",
+      comparison: "+2%",
+      comparisonText: "vs last week (137)",
       trend: "up",
       icon: MapPin,
       bgColor: "bg-pink-50",
@@ -230,7 +230,7 @@ const DashboardCards = () => {
     { month: 'Jun', dogs: 145, cats: 158, total: 303, dogPct: 47.9, catPct: 52.1 },
     { month: 'Jul', dogs: 171, cats: 96,  total: 267, dogPct: 66.8, catPct: 33.2 },
     { month: 'Aug', dogs: 177, cats: 127, total: 304, dogPct: 58.2, catPct: 41.8 },
-    { month: 'Sep', dogs: 83,  cats: 66,  total: 149, dogPct: 55.7, catPct: 44.3 }
+    { month: 'Sep', dogs: 143,  cats: 110,  total: 253, dogPct: 56.5, catPct: 43.5 }
   ];
 
   // ===== Vaccine Clinics (kept) =====
@@ -268,7 +268,8 @@ const DashboardCards = () => {
     5: { adoptions: 284, days: 31 },
     6: { adoptions: 303, days: 30 },
     7: { adoptions: 267, days: 31 },
-    8: { adoptions: 304, days: 31 }
+    8: { adoptions: 304, days: 31 },
+    9: { adoptions: 253, days: 30 }
   };
   const AUG_PRED = 299, SEP_PRED = 291, OCT_PRED = 218, NOV_PRED = 222, DEC_PRED = 286;
   const BAND_HALF_WIDTH = 50;
