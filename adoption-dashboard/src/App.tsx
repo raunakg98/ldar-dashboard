@@ -164,9 +164,9 @@ const DashboardCards = () => {
     },
     {
       title: "Sep 2025",
-      value: "253",
+      value: "255",
       subtitle: "projected 245-275",
-      comparison: "-8%",
+      comparison: "-7%",
       comparisonText: "vs Sep 2024(275)",
       trend: "down",
       icon: Calendar,
@@ -177,11 +177,11 @@ const DashboardCards = () => {
     },
     {
       title: "Animals in Foster Care",
-      value: "154",
+      value: "168",
       subtitle: (
         <div>
-          <div>26 dogs in boarding</div>
-          <div>9 cats at PetSmart</div>
+          <div>24 dogs in boarding</div>
+          <div>11 cats at PetSmart</div>
           <div>20 cats at Meow Maison</div>
         </div>
       ),
@@ -194,10 +194,10 @@ const DashboardCards = () => {
     },
     {
       title: "Animals in Care VA",
-      value: "231",
+      value: "229",
       subtitle: "current snapshot",
-      comparison: "+10%",
-      comparisonText: "vs last week(209)",
+      comparison: "-1%",
+      comparisonText: "vs last week(231)",
       trend: "up",
       icon: MapPin,
       bgColor: "bg-orange-50",
@@ -207,10 +207,10 @@ const DashboardCards = () => {
     },
     {
       title: "Animals in Care SC",
-      value: "141",
+      value: "100",
       subtitle: "current snapshot",
-      comparison: "+2%",
-      comparisonText: "vs last week (137)",
+      comparison: "-29%",
+      comparisonText: "vs last week (141)",
       trend: "up",
       icon: MapPin,
       bgColor: "bg-pink-50",
@@ -230,7 +230,8 @@ const DashboardCards = () => {
     { month: 'Jun', dogs: 145, cats: 158, total: 303, dogPct: 47.9, catPct: 52.1 },
     { month: 'Jul', dogs: 171, cats: 96,  total: 267, dogPct: 66.8, catPct: 33.2 },
     { month: 'Aug', dogs: 177, cats: 127, total: 304, dogPct: 58.2, catPct: 41.8 },
-    { month: 'Sep', dogs: 143,  cats: 110,  total: 253, dogPct: 56.5, catPct: 43.5 }
+    { month: 'Sep', dogs: 143,  cats: 112,  total: 255, dogPct: 56, catPct: 44 },
+    { month: 'Sep', dogs: 42,  cats: 25,  total: 67, dogPct: 62.6, catPct: 37.4 }
   ];
 
   // ===== Vaccine Clinics (kept) =====
