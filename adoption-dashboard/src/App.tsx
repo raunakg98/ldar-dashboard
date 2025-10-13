@@ -167,7 +167,7 @@ const DashboardCards = () => {
       value: "127",
       subtitle: "projected 210-225",
       comparison: "-37%",
-      comparisonText: "vs Sep 2024(204)",
+      comparisonText: "vs Oct 2024(204)",
       trend: "down",
       icon: Calendar,
       bgColor: "bg-green-50",
