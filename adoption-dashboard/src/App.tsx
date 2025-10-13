@@ -163,11 +163,11 @@ const DashboardCards = () => {
       trendColor: ytdPctVsPrev != null ? (ytdPctVsPrev >= 0 ? "text-green-600" : "text-red-600") : "text-green-600"
     },
     {
-      title: "Sep 2025",
-      value: "255",
-      subtitle: "projected 245-275",
-      comparison: "-7%",
-      comparisonText: "vs Sep 2024(275)",
+      title: "Oct 2025",
+      value: "127",
+      subtitle: "projected 210-225",
+      comparison: "-37%",
+      comparisonText: "vs Sep 2024(204)",
       trend: "down",
       icon: Calendar,
       bgColor: "bg-green-50",
@@ -177,12 +177,12 @@ const DashboardCards = () => {
     },
     {
       title: "Animals in Foster Care",
-      value: "168",
+      value: "184",
       subtitle: (
         <div>
-          <div>24 dogs in boarding</div>
-          <div>11 cats at PetSmart</div>
-          <div>20 cats at Meow Maison</div>
+          <div>21 dogs in boarding</div>
+          <div>8 cats at PetSmart</div>
+          <div>16 cats at Meow Maison</div>
         </div>
       ),
       trend: "up",
@@ -194,10 +194,10 @@ const DashboardCards = () => {
     },
     {
       title: "Animals in Care VA",
-      value: "229",
+      value: "235",
       subtitle: "current snapshot",
-      comparison: "-1%",
-      comparisonText: "vs last week(231)",
+      comparison: "+2%",
+      comparisonText: "vs last week(229)",
       trend: "up",
       icon: MapPin,
       bgColor: "bg-orange-50",
@@ -207,10 +207,10 @@ const DashboardCards = () => {
     },
     {
       title: "Animals in Care SC",
-      value: "100",
+      value: "150",
       subtitle: "current snapshot",
-      comparison: "-29%",
-      comparisonText: "vs last week (141)",
+      comparison: "+50%",
+      comparisonText: "vs last week (100)",
       trend: "up",
       icon: MapPin,
       bgColor: "bg-pink-50",
@@ -231,7 +231,7 @@ const DashboardCards = () => {
     { month: 'Jul', dogs: 171, cats: 96,  total: 267, dogPct: 66.8, catPct: 33.2 },
     { month: 'Aug', dogs: 177, cats: 127, total: 304, dogPct: 58.2, catPct: 41.8 },
     { month: 'Sep', dogs: 143,  cats: 112,  total: 255, dogPct: 56, catPct: 44 },
-    { month: 'Sep', dogs: 42,  cats: 25,  total: 67, dogPct: 62.6, catPct: 37.4 }
+    { month: 'Oct', dogs: 80,  cats: 47,  total: 127, dogPct: 62.9, catPct: 37.1 }
   ];
 
   // ===== Vaccine Clinics (kept) =====
@@ -270,7 +270,8 @@ const DashboardCards = () => {
     6: { adoptions: 303, days: 30 },
     7: { adoptions: 267, days: 31 },
     8: { adoptions: 304, days: 31 },
-    9: { adoptions: 253, days: 30 }
+    9: { adoptions: 255, days: 30 },
+    10: { adoptions: 127, days: 31 }
   };
   const AUG_PRED = 299, SEP_PRED = 291, OCT_PRED = 218, NOV_PRED = 222, DEC_PRED = 286;
   const BAND_HALF_WIDTH = 50;
