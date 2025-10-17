@@ -242,7 +242,8 @@ const DashboardCards = () => {
     { date: 'Dec 7, 2024', interested: 85,  attended: 63,  totalAnimals: 144, totalVaccines: 226, showUpRate: 74.1, microchips: 83,  cats: 52, dogs: 92 },
     { date: 'Feb 22, 2025', interested: 163, attended: 24,  totalAnimals: 207, totalVaccines: 298, showUpRate: 14.7, microchips: 125, cats: 64, dogs: 143 },
     { date: 'May 8, 2025',  interested: 91,  attended: 53,  totalAnimals: 114, totalVaccines: 137, showUpRate: 58.2, microchips: 70,  cats: 30, dogs: 84 },
-    { date: 'Jul 25, 2025', interested: 323, attended: 191, totalAnimals: 406, totalVaccines: 658, showUpRate: 59.1, microchips: 221, cats: 131, dogs: 275 }
+    { date: 'Jul 25, 2025', interested: 323, attended: 191, totalAnimals: 406, totalVaccines: 658, showUpRate: 59.1, microchips: 221, cats: 131, dogs: 275 },
+    { date: 'Oct 3, 2025', interested: 297, attended: 175, totalAnimals: 341, totalVaccines: 563, showUpRate: 58.9, microchips: 208, cats: 103, dogs: 238 }
   ];
   const july2025Services = [
     { name: 'DHP Vaccines', value: 209, color: '#10b981' },
@@ -251,9 +252,16 @@ const DashboardCards = () => {
     { name: 'FVRCP',        value: 122, color: '#3b82f6' },
     { name: 'Rabies Cat',   value: 103, color: '#f59e0b' }
   ];
-  // const getTrendIcon = (trend: string, trendColor: string) => (
-  //   trend === 'up' ? <TrendingUp className={`h-4 w-4 ${trendColor}`} /> : <TrendingDown className={`h-4 w-4 ${trendColor}`} />
-  // );
+
+  const oct2025Services = [
+    { name: 'DHP Vaccines', value: 196, color: '#10b981' },
+    { name: 'Rabies Dog',   value: 182, color: '#ef4444' },
+    { name: 'Microchips',   value: 208, color: '#8b5cf6' },
+    { name: 'FVRCP',        value: 94, color: '#3b82f6' },
+    { name: 'Rabies Cat',   value: 91, color: '#f59e0b' }
+  ];
+
+
 
   // ===== Seasonality & 2025 Predictions (kept) =====
   const HIST = [
@@ -563,6 +571,46 @@ const DashboardCards = () => {
               </div>
               
               <div className="bg-gray-50 p-6 rounded-lg">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">October 3, 2025 - Vaccine Clinic Breakdown</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <ResponsiveContainer width="100%" height={250}>
+                      <PieChart>
+                        <Pie
+                          data={oct2025Services}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={false}
+                          label={({ name, value }) => `${name.split(' ')[0]}: ${value}`}
+                          outerRadius={80}
+                          fill="#8884d8"
+                          dataKey="value"
+                        >
+                          {oct2025Services.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.color} />
+                          ))}
+                        </Pie>
+                        <Tooltip />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                  
+                  <div className="bg-white p-4 rounded border border-gray-300 h-fit">
+                    <h4 className="font-semibold text-gray-900 mb-3">Vaccine Clinic Day Stats</h4>
+                    <div className="space-y-3 text-sm">
+                      <div className="flex justify-between"><span className="text-gray-600">Interested:</span><span className="font-medium text-gray-900">297</span></div>
+                      <div className="flex justify-between"><span className="text-gray-600">Attended:</span><span className="font-medium text-gray-900">175 (59%)</span></div>
+                      <div className="flex justify-between border-t border-gray-200 pt-2"><span className="text-gray-600">Dogs Served:</span><span className="font-medium text-gray-900">238</span></div>
+                      <div className="flex justify-between"><span className="text-gray-600">Cats Served:</span><span className="font-medium text-gray-900">103</span></div>
+                      <div className="flex justify-between border-t border-gray-200 pt-2"><span className="text-gray-600">Total Animals:</span><span className="font-medium text-gray-900">341</span></div>
+                      <div className="flex justify-between"><span className="text-gray-600">Total Services:</span><span className="font-medium text-gray-900">771</span></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
+                            <div className="bg-gray-50 p-6 rounded-lg">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">July 25, 2025 - Record Clinic Breakdown</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
@@ -615,10 +663,10 @@ const DashboardCards = () => {
                 <div className="bg-yellow-50 p-6 rounded-lg">
                   <h4 className="text-lg font-semibold text-yellow-900 mb-3">Evolution</h4>
                   <ul className="text-sm text-yellow-800 space-y-2">
-                    <li>• Total program impact: 1,343 animals served</li>
-                    <li>• 1,886 vaccines administered across all clinics</li>
-                    <li>• Dogs dominate vaccine clinics (66% vs 34% cats)</li>
-                    <li>• Microchip adoption growing rapidly</li>
+                    <li>• Total program impact: 1,684 animals served</li>
+                    <li>• 2,534 vaccines administered across all clinics</li>
+                    <li>• Dogs dominate vaccine clinics (67% vs 33% cats)</li>
+                    <li>• Microchip adoption growing rapidly within the community</li>
                   </ul>
                 </div>
               </div>
