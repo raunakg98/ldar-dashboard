@@ -164,9 +164,9 @@ const DashboardCards = () => {
     },
     {
       title: "Oct 2025",
-      value: "127",
+      value: "189",
       subtitle: "projected 210-225",
-      comparison: "-37%",
+      comparison: "-7%",
       comparisonText: "vs Oct 2024(204)",
       trend: "down",
       icon: Calendar,
@@ -177,12 +177,12 @@ const DashboardCards = () => {
     },
     {
       title: "Animals in Foster Care",
-      value: "184",
+      value: "213",
       subtitle: (
         <div>
-          <div>21 dogs in boarding</div>
-          <div>8 cats at PetSmart</div>
-          <div>16 cats at Meow Maison</div>
+          <div>26 dogs in boarding</div>
+          <div>11 cats at PetSmart</div>
+          <div>14 cats at Meow Maison</div>
         </div>
       ),
       trend: "up",
@@ -194,7 +194,7 @@ const DashboardCards = () => {
     },
     {
       title: "Animals in Care VA",
-      value: "235",
+      value: "264",
       subtitle: "current snapshot",
       comparison: "+2%",
       comparisonText: "vs last week(229)",
@@ -207,10 +207,10 @@ const DashboardCards = () => {
     },
     {
       title: "Animals in Care SC",
-      value: "150",
+      value: "78",
       subtitle: "current snapshot",
-      comparison: "+50%",
-      comparisonText: "vs last week (100)",
+      comparison: "-48%",
+      comparisonText: "vs last week (150)",
       trend: "up",
       icon: MapPin,
       bgColor: "bg-pink-50",
@@ -231,7 +231,7 @@ const DashboardCards = () => {
     { month: 'Jul', dogs: 171, cats: 96,  total: 267, dogPct: 66.8, catPct: 33.2 },
     { month: 'Aug', dogs: 177, cats: 127, total: 304, dogPct: 58.2, catPct: 41.8 },
     { month: 'Sep', dogs: 143,  cats: 112,  total: 255, dogPct: 56, catPct: 44 },
-    { month: 'Oct', dogs: 80,  cats: 47,  total: 127, dogPct: 62.9, catPct: 37.1 }
+    { month: 'Oct', dogs: 116,  cats: 73,  total: 189, dogPct: 61.4, catPct: 38.6 }
   ];
 
   // ===== Vaccine Clinics (kept) =====
@@ -279,7 +279,7 @@ const DashboardCards = () => {
     7: { adoptions: 267, days: 31 },
     8: { adoptions: 304, days: 31 },
     9: { adoptions: 255, days: 30 },
-    10: { adoptions: 127, days: 31 }
+    10: { adoptions: 189, days: 31 }
   };
   const AUG_PRED = 299, SEP_PRED = 291, OCT_PRED = 218, NOV_PRED = 222, DEC_PRED = 286;
   const BAND_HALF_WIDTH = 50;
