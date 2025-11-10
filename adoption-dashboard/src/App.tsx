@@ -164,9 +164,9 @@ const DashboardCards = () => {
     },
     {
       title: "Nov 2025",
-      value: "75",
+      value: "129",
       subtitle: "projected 210-225",
-      comparison: "-63%",
+      comparison: "-37%",
       comparisonText: "vs Nov 2024(205)",
       trend: "up",
       icon: Calendar,
@@ -177,12 +177,12 @@ const DashboardCards = () => {
     },
     {
       title: "Animals in Foster Care",
-      value: "197",
+      value: "189",
       subtitle: (
         <div>
           <div>15 dogs in boarding</div>
-          <div>5 cats at PetSmart</div>
-          <div>17 cats at Meow Maison</div>
+          <div>8 cats at PetSmart</div>
+          <div>25 cats at Meow Maison</div>
         </div>
       ),
       trend: "up",
@@ -194,10 +194,10 @@ const DashboardCards = () => {
     },
     {
       title: "Animals in Care VA",
-      value: "234",
+      value: "236",
       subtitle: "current snapshot",
-      comparison: "-1%",
-      comparisonText: "vs last week(237)",
+      comparison: "+1%",
+      comparisonText: "vs last week(234)",
       trend: "up",
       icon: MapPin,
       bgColor: "bg-orange-50",
@@ -207,10 +207,10 @@ const DashboardCards = () => {
     },
     {
       title: "Animals in Care SC",
-      value: "86",
+      value: "121",
       subtitle: "current snapshot",
-      comparison: "-27%",
-      comparisonText: "vs last week (118)",
+      comparison: "40%",
+      comparisonText: "vs last week (86)",
       trend: "up",
       icon: MapPin,
       bgColor: "bg-pink-50",
@@ -232,7 +232,7 @@ const DashboardCards = () => {
     { month: 'Aug', dogs: 177, cats: 127, total: 304, dogPct: 58.2, catPct: 41.8 },
     { month: 'Sep', dogs: 143,  cats: 112,  total: 255, dogPct: 56, catPct: 44 },
     { month: 'Oct', dogs: 155,  cats: 95,  total: 250, dogPct: 62, catPct: 38 },
-    { month: 'Nov', dogs: 42,  cats: 33,  total: 75, dogPct: 56, catPct: 44 }
+    { month: 'Nov', dogs: 75,  cats: 54,  total: 129, dogPct: 58, catPct: 42 }
   ];
 
   // ===== Vaccine Clinics (kept) =====
@@ -281,9 +281,9 @@ const DashboardCards = () => {
     8: { adoptions: 304, days: 31 },
     9: { adoptions: 255, days: 30 },
     10: { adoptions: 250, days: 31 },
-    11: { adoptions: 75, days: 30}
+    11: { adoptions: 129, days: 30}
   };
-  const AUG_PRED = 299, SEP_PRED = 291, OCT_PRED = 218, NOV_PRED = 222, DEC_PRED = 286;
+  const AUG_PRED = 299, SEP_PRED = 291, OCT_PRED = 218, NOV_PRED = 212, DEC_PRED = 286;
   const BAND_HALF_WIDTH = 50;
   const PRED_BY_MONTH: Record<string, number> = { Aug: AUG_PRED, Sep: SEP_PRED, Oct: OCT_PRED, Nov: NOV_PRED, Dec: DEC_PRED };
   const peakPredMonth = Object.entries(PRED_BY_MONTH).reduce((a,b)=> a[1] > b[1] ? a : b)[0];
