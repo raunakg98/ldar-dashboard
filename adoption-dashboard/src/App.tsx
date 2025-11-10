@@ -180,7 +180,7 @@ const DashboardCards = () => {
       value: "189",
       subtitle: (
         <div>
-          <div>15 dogs in boarding</div>
+          <div>14 dogs in boarding</div>
           <div>8 cats at PetSmart</div>
           <div>25 cats at Meow Maison</div>
         </div>
