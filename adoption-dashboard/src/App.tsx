@@ -207,7 +207,7 @@ const DashboardCards = () => {
     },
     {
       title: "Animals in Care SC",
-      value: "91",
+      value: "129",
       subtitle: "current snapshot",
       comparison: "-25%",
       comparisonText: "vs last week (121)",
