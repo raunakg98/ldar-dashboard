@@ -177,7 +177,7 @@ const DashboardCards = () => {
     },
     {
       title: "Animals in Foster Care",
-      value: "180",
+      value: "157",
       subtitle: (
         <div>
           <div>16 dogs in boarding</div>
