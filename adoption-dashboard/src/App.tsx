@@ -180,9 +180,9 @@ const DashboardCards = () => {
       value: "180",
       subtitle: (
         <div>
-          <div>17 dogs in boarding</div>
-          <div>13 cats at PetSmart</div>
-          <div>21 cats at Meow Maison</div>
+          <div>16 dogs in boarding</div>
+          <div>8 cats at PetSmart</div>
+          <div>17 cats at Meow Maison</div>
         </div>
       ),
       trend: "up",
