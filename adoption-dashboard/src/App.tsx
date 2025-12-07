@@ -163,11 +163,11 @@ const DashboardCards = () => {
       trendColor: ytdPctVsPrev != null ? (ytdPctVsPrev >= 0 ? "text-green-600" : "text-red-600") : "text-green-600"
     },
     {
-      title: "Nov 2025",
+      title: "Dec 2025",
       value: "78",
       subtitle: "projected 210-225",
       comparison: "-67%",
-      comparisonText: "vs Nov 2024(240)",
+      comparisonText: "vs Dec 2024(240)",
       trend: "up",
       icon: Calendar,
       bgColor: "bg-green-50",
