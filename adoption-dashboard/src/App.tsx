@@ -193,31 +193,53 @@ const DashboardCards = () => {
       trendColor: "text-green-600"
     },
     {
-      title: "Animals in Care VA",
-      value: "236",
-      subtitle: "current snapshot",
-      comparison: "18%",
-      comparisonText: "vs last week(200)",
-      trend: "up",
-      icon: MapPin,
-      bgColor: "bg-orange-50",
-      textColor: "text-orange-900",
-      valueColor: "text-orange-600",
-      trendColor: "text-red-600"
-    },
+  title: "Animals in Care VA",
+  value: "236",
+  subtitle: (
+    <div className="flex gap-4 mt-1">
+      <div className="flex items-center gap-1.5">
+        <div className="w-2 h-2 rounded-full bg-orange-400"></div>
+        <span className="text-xs font-medium">142 dogs</span>
+      </div>
+      <div className="flex items-center gap-1.5">
+        <div className="w-2 h-2 rounded-full bg-orange-300"></div>
+        <span className="text-xs font-medium">94 cats</span>
+      </div>
+    </div>
+  ),
+  comparison: "18%",
+  comparisonText: "vs last week(200)",
+  trend: "up",
+  icon: MapPin,
+  bgColor: "bg-orange-50",
+  textColor: "text-orange-900",
+  valueColor: "text-orange-600",
+  trendColor: "text-red-600"
+},
     {
-      title: "Animals in Care SC",
-      value: "60",
-      subtitle: "current snapshot",
-      comparison: "-56%",
-      comparisonText: "vs last week (139)",
-      trend: "up",
-      icon: MapPin,
-      bgColor: "bg-pink-50",
-      textColor: "text-pink-900",
-      valueColor: "text-pink-600",
-      trendColor: "text-green-600"
-    }
+  title: "Animals in Care SC",
+  value: "60",
+  subtitle: (
+    <div className="flex gap-4 mt-1">
+      <div className="flex items-center gap-1.5">
+        <div className="w-2 h-2 rounded-full bg-pink-400"></div>
+        <span className="text-xs font-medium">35 dogs</span>
+      </div>
+      <div className="flex items-center gap-1.5">
+        <div className="w-2 h-2 rounded-full bg-pink-300"></div>
+        <span className="text-xs font-medium">25 cats</span>
+      </div>
+    </div>
+  ),
+  comparison: "-56%",
+  comparisonText: "vs last week (139)",
+  trend: "up",
+  icon: MapPin,
+  bgColor: "bg-pink-50",
+  textColor: "text-pink-900",
+  valueColor: "text-pink-600",
+  trendColor: "text-green-600"
+}
   ];
 
   // ===== Monthly 2025 breakdown cats vs dogs (kept) =====
