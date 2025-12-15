@@ -140,7 +140,6 @@ const DashboardCards = () => {
     { id: 'speciesYTD', title: 'YTD Adoptions by Species', subtitle: 'Dogs vs Cats (YTD) + YTD Total (gray) from CSV' },
     { id: 'predictions', title: 'Seasonality & 2025 Predictions', subtitle: 'Avg-centered bands • Aug–Dec forecast' },
     { id: 'adoptions', title: 'Monthly Adoptions Breakdown', subtitle: '2025 Cats vs Dogs Trends' },
-    // { id: 'yearOverYear', title: '2024 vs 2025 Monthly Comparison', subtitle: 'Species adoption trends year-over-year' },
     { id: 'vaccines', title: 'Vaccine Clinics Performance', subtitle: 'All-Time Analysis' }
   ];
   const [currentVizIndex, setCurrentVizIndex] = useState(0);
@@ -603,82 +602,6 @@ const DashboardCards = () => {
                   <li><strong>168 vs 91:</strong> Nearly 2:1 dog-to-cat ratio</li>
                   <li><strong>Breaking the pattern:</strong> Highest dog month since early 2024</li>
                 </ul>
-              </div>
-            </div>
-          </div>
-        )}
-
-        Year Over Year Comparison
-        {currentViz.id === 'yearOverYear' && (
-          <div className="space-y-6">
-            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                Monthly Adoptions: 2024 vs 2025 by Species
-              </h3>
-              <ResponsiveContainer width="100%" height={400}>
-                <ComposedChart data={yearOverYearComparison}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                  <XAxis dataKey="month" stroke="#6b7280" />
-                  <YAxis stroke="#6b7280" label={{ value: 'Adoptions', angle: -90, position: 'insideLeft' }} />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: 'white',
-                      border: '1px solid #e5e7eb',
-                      borderRadius: '8px',
-                      padding: '12px'
-                    }}
-                    formatter={(value: any, name: any) => {
-                      const labels: Record<string, string> = {
-                        dogs2024: 'Dogs 2024',
-                        dogs2025: 'Dogs 2025',
-                        cats2024: 'Cats 2024',
-                        cats2025: 'Cats 2025'
-                      };
-                      return [value, labels[name] || name];
-                    }}
-                    labelFormatter={(label) => `${label}`}
-                  />
-                  <Legend 
-                    wrapperStyle={{ paddingTop: '20px' }}
-                    formatter={(value) => {
-                      const labels: Record<string, string> = {
-                        dogs2024: 'Dogs 2024',
-                        dogs2025: 'Dogs 2025',
-                        cats2024: 'Cats 2024',
-                        cats2025: 'Cats 2025'
-                      };
-                      return labels[value] || value;
-                    }}
-                  />
-                  
-                  {/* 2024 Bars */}
-                  <Bar dataKey="dogs2024" fill="#93c5fd" name="dogs2024" />
-                  <Bar dataKey="cats2024" fill="#86efac" name="cats2024" />
-                  
-                  {/* 2025 Bars */}
-                  <Bar dataKey="dogs2025" fill="#3b82f6" name="dogs2025" />
-                  <Bar dataKey="cats2025" fill="#10b981" name="cats2025" />
-                </ComposedChart>
-              </ResponsiveContainer>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                <div className="bg-blue-50 p-4 rounded-lg">
-                  <h4 className="font-semibold text-blue-900 mb-2">🐕 Dog Adoptions</h4>
-                  <ul className="text-sm text-blue-800 space-y-1">
-                    <li>• 2024 Total: {monthly2024CatsVsDogs.reduce((sum, m) => sum + m.dogs, 0)} dogs</li>
-                    <li>• 2025 Total: {monthly2025CatsVsDogs.reduce((sum, m) => sum + m.dogs, 0)} dogs</li>
-                    <li>• Change: {((monthly2025CatsVsDogs.reduce((sum, m) => sum + m.dogs, 0) / monthly2024CatsVsDogs.reduce((sum, m) => sum + m.dogs, 0) - 1) * 100).toFixed(1)}%</li>
-                  </ul>
-                </div>
-                
-                <div className="bg-green-50 p-4 rounded-lg">
-                  <h4 className="font-semibold text-green-900 mb-2">🐱 Cat Adoptions</h4>
-                  <ul className="text-sm text-green-800 space-y-1">
-                    <li>• 2024 Total: {monthly2024CatsVsDogs.reduce((sum, m) => sum + m.cats, 0)} cats</li>
-                    <li>• 2025 Total: {monthly2025CatsVsDogs.reduce((sum, m) => sum + m.cats, 0)} cats</li>
-                    <li>• Change: {((monthly2025CatsVsDogs.reduce((sum, m) => sum + m.cats, 0) / monthly2024CatsVsDogs.reduce((sum, m) => sum + m.cats, 0) - 1) * 100).toFixed(1)}%</li>
-                  </ul>
-                </div>
               </div>
             </div>
           </div>
