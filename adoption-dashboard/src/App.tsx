@@ -165,9 +165,9 @@ const DashboardCards = () => {
     },
     {
       title: "Dec 2025",
-      value: "78",
+      value: "115",
       subtitle: "projected 210-225",
-      comparison: "-67%",
+      comparison: "-52%",
       comparisonText: "vs Dec 2024(240)",
       trend: "up",
       icon: Calendar,
@@ -178,12 +178,12 @@ const DashboardCards = () => {
     },
     {
       title: "Animals in Foster Care",
-      value: "194",
+      value: "189",
       subtitle: (
         <div>
-          <div>22 dogs in boarding</div>
+          <div>17 dogs in boarding</div>
           <div>10 cats at PetSmart</div>
-          <div>12 cats at Meow Maison</div>
+          <div>15 cats at Meow Maison</div>
         </div>
       ),
       trend: "up",
@@ -195,21 +195,21 @@ const DashboardCards = () => {
     },
     {
   title: "Animals in Care VA",
-  value: "236",
+  value: "231",
   subtitle: (
     <div className="flex gap-4 mt-1">
       <div className="flex items-center gap-1.5">
         <div className="w-2 h-2 rounded-full bg-orange-400"></div>
-        <span className="text-xs font-medium">142 dogs</span>
+        <span className="text-xs font-medium">114 dogs</span>
       </div>
       <div className="flex items-center gap-1.5">
         <div className="w-2 h-2 rounded-full bg-orange-300"></div>
-        <span className="text-xs font-medium">94 cats</span>
+        <span className="text-xs font-medium">117 cats</span>
       </div>
     </div>
   ),
-  comparison: "18%",
-  comparisonText: "vs last week(200)",
+  comparison: "1%",
+  comparisonText: "vs last week(236)",
   trend: "up",
   icon: MapPin,
   bgColor: "bg-orange-50",
@@ -219,21 +219,21 @@ const DashboardCards = () => {
 },
     {
   title: "Animals in Care SC",
-  value: "60",
+  value: "124",
   subtitle: (
     <div className="flex gap-4 mt-1">
       <div className="flex items-center gap-1.5">
         <div className="w-2 h-2 rounded-full bg-pink-400"></div>
-        <span className="text-xs font-medium">35 dogs</span>
+        <span className="text-xs font-medium">80 dogs</span>
       </div>
       <div className="flex items-center gap-1.5">
         <div className="w-2 h-2 rounded-full bg-pink-300"></div>
-        <span className="text-xs font-medium">25 cats</span>
+        <span className="text-xs font-medium">44 cats</span>
       </div>
     </div>
   ),
-  comparison: "-56%",
-  comparisonText: "vs last week (139)",
+  comparison: "106%",
+  comparisonText: "vs last week (60)",
   trend: "up",
   icon: MapPin,
   bgColor: "bg-pink-50",
@@ -256,7 +256,7 @@ const DashboardCards = () => {
     { month: 'Sep', dogs: 143,  cats: 112,  total: 255, dogPct: 56, catPct: 44 },
     { month: 'Oct', dogs: 155,  cats: 95,  total: 250, dogPct: 62, catPct: 38 },
     { month: 'Nov', dogs: 178,  cats: 107,  total: 285, dogPct: 62, catPct: 38 },
-    { month: 'Nov', dogs: 44,  cats: 34,  total: 78, dogPct: 56.5, catPct: 43.5 }
+    { month: 'Dec', dogs: 66,  cats: 49,  total: 115, dogPct: 57.4, catPct: 42.6 }
   ];
 
   // // ===== Monthly 2025 breakdown cats vs dogs (kept) =====
@@ -338,7 +338,7 @@ const DashboardCards = () => {
     9: { adoptions: 255, days: 30 },
     10: { adoptions: 250, days: 31 },
     11: { adoptions: 285, days: 30},
-    12: { adoptions: 78, days: 31}
+    12: { adoptions: 115, days: 31}
   };
   const AUG_PRED = 299, SEP_PRED = 291, OCT_PRED = 218, NOV_PRED = 212, DEC_PRED = 286;
   const BAND_HALF_WIDTH = 50;
