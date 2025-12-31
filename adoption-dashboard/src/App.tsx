@@ -5,7 +5,7 @@ import { TrendingUp, TrendingDown, Heart, Calendar, MapPin, ChevronLeft, Chevron
 import {
   Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Bar,
   ResponsiveContainer, ComposedChart, PieChart, Pie, Cell, Area,
-  ReferenceArea, ReferenceDot, ReferenceLine
+  ReferenceArea, ReferenceDot, ReferenceLine, BarChart
 } from 'recharts';
 
 type SpeciesRow = {
@@ -15,42 +15,50 @@ type SpeciesRow = {
 
 type YTDPoint = { year: string; dogs: number; cats: number };
 
+type MonthlyComparisonPoint = {
+  month: string;
+  dogs2024: number;
+  cats2024: number;
+  dogs2025: number;
+  cats2025: number;
+  total2024: number;
+  total2025: number;
+};
+
 function formatInt(n: number | undefined) {
   if (n == null || Number.isNaN(n)) return '—';
   return n.toLocaleString();
 }
+
 function toYear(d: Date) { return d.getFullYear(); }
+
 function rangeYears(startYear: number, endYear: number): string[] {
   const out: string[] = [];
   for (let y = startYear; y <= endYear; y++) out.push(String(y));
   return out;
 }
 
-/** YTD-by-species using the same cutoff (today’s month/day) for each year. */
+/** YTD-by-species using the same cutoff (today's month/day) for each year. */
 function computeYTDBySpecies(rows: SpeciesRow[], now: Date = new Date()): YTDPoint[] {
   const cutoffMonth = now.getMonth() + 1;
   const cutoffDay = now.getDate();
   const currentYear = toYear(now);
-
   const agg: Record<string, { dogs: number; cats: number }> = {};
-
+  
   for (const r of rows) {
     const dt = new Date(r['Adoption Date']);
     if (Number.isNaN(dt.getTime())) continue;
-
     const y = String(dt.getFullYear());
     const m = dt.getMonth() + 1;
     const d = dt.getDate();
-
     const include = m < cutoffMonth || (m === cutoffMonth && d <= cutoffDay);
     if (!include) continue;
-
     const sp = (r.Species || '').trim().toLowerCase();
     if (!agg[y]) agg[y] = { dogs: 0, cats: 0 };
     if (sp === 'dog') agg[y].dogs += 1;
     if (sp === 'cat') agg[y].cats += 1;
   }
-
+  
   const yearsToShow = rangeYears(2021, currentYear);
   return yearsToShow.map((y) => ({
     year: y,
@@ -63,6 +71,7 @@ function computeYTDBySpecies(rows: SpeciesRow[], now: Date = new Date()): YTDPoi
 function computeFullYearTotalsBySpecies(rows: SpeciesRow[], now: Date = new Date()): YTDPoint[] {
   const currentYear = toYear(now);
   const agg: Record<string, { dogs: number; cats: number }> = {};
+  
   for (const r of rows) {
     const dt = new Date(r['Adoption Date']);
     if (Number.isNaN(dt.getTime())) continue;
@@ -72,6 +81,7 @@ function computeFullYearTotalsBySpecies(rows: SpeciesRow[], now: Date = new Date
     if (sp === 'dog') agg[y].dogs += 1;
     if (sp === 'cat') agg[y].cats += 1;
   }
+  
   const yearsToShow = rangeYears(2021, currentYear);
   return yearsToShow.map((y) => ({
     year: y,
@@ -80,11 +90,64 @@ function computeFullYearTotalsBySpecies(rows: SpeciesRow[], now: Date = new Date
   }));
 }
 
+/** Compute monthly 2024 vs 2025 comparison from CSV */
+function computeMonthlyComparison(rows: SpeciesRow[]): MonthlyComparisonPoint[] {
+  const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  
+  // Initialize aggregation structure
+  const agg: Record<string, Record<number, { dogs: number; cats: number }>> = {
+    '2024': {},
+    '2025': {}
+  };
+  
+  // Initialize all months to 0
+  for (let m = 1; m <= 12; m++) {
+    agg['2024'][m] = { dogs: 0, cats: 0 };
+    agg['2025'][m] = { dogs: 0, cats: 0 };
+  }
+  
+  // Aggregate data from CSV
+  for (const r of rows) {
+    const dt = new Date(r['Adoption Date']);
+    if (Number.isNaN(dt.getTime())) continue;
+    
+    const year = String(dt.getFullYear());
+    const month = dt.getMonth() + 1; // 1-12
+    
+    // Only process 2024 and 2025
+    if (year !== '2024' && year !== '2025') continue;
+    
+    const sp = (r.Species || '').trim().toLowerCase();
+    if (!agg[year][month]) agg[year][month] = { dogs: 0, cats: 0 };
+    
+    if (sp === 'dog') agg[year][month].dogs += 1;
+    if (sp === 'cat') agg[year][month].cats += 1;
+  }
+  
+  // Build the comparison data
+  return MONTHS.map((monthName, idx) => {
+    const m = idx + 1;
+    const data2024 = agg['2024'][m] || { dogs: 0, cats: 0 };
+    const data2025 = agg['2025'][m] || { dogs: 0, cats: 0 };
+    
+    return {
+      month: monthName,
+      dogs2024: data2024.dogs,
+      cats2024: data2024.cats,
+      dogs2025: data2025.dogs,
+      cats2025: data2025.cats,
+      total2024: data2024.dogs + data2024.cats,
+      total2025: data2025.dogs + data2025.cats
+    };
+  });
+}
+
 const DashboardCards = () => {
   // ===== Load CSV =====
   const [speciesRows, setSpeciesRows] = useState<SpeciesRow[]>([]);
   const [csvLoaded, setCsvLoaded] = useState(false);
-
+  const [comparisonFilter, setComparisonFilter] = useState<'total' | 'dogs' | 'cats'>('total');
+  
   useEffect(() => {
     Papa.parse('/data/adoptions_by_species.csv', {
       download: true,
@@ -99,14 +162,15 @@ const DashboardCards = () => {
       error: () => setCsvLoaded(true),
     });
   }, []);
-
+  
   const reportDate = useMemo(() => new Date(), []);
   const cutoffLabel = reportDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
-
+  
   // === Build YTD & Full-year datasets from the spreadsheet ===
   const ytdSpeciesData = useMemo(() => computeYTDBySpecies(speciesRows, reportDate), [speciesRows, reportDate]);
   const totalSpeciesData = useMemo(() => computeFullYearTotalsBySpecies(speciesRows, reportDate), [speciesRows, reportDate]);
-
+  const yearOverYearData = useMemo(() => computeMonthlyComparison(speciesRows), [speciesRows]);
+  
   // Merge into one array for the first chart: YTD species + TOTAL(YTD) + (keep full-year totals if needed later)
   type ChartYTDPoint = YTDPoint & { total: number; totalYTD: number };
   const ytdSpeciesForChart: ChartYTDPoint[] = useMemo(() => {
@@ -118,35 +182,39 @@ const DashboardCards = () => {
       return { ...ytd, total: totalFull, totalYTD };
     });
   }, [ytdSpeciesData, totalSpeciesData]);
-
+  
   // === YTD metric card (compare current year YTD vs previous year YTD) ===
   const currentYearStr = String(reportDate.getFullYear());
   const prevYearStr = String(reportDate.getFullYear() - 1);
+  
   const findYTDTotal = (year: string) => {
     const row = ytdSpeciesData.find(p => p.year === year);
     return row ? row.dogs + row.cats : undefined;
   };
+  
   const ytdCurrent = findYTDTotal(currentYearStr);
   const ytdPrev = findYTDTotal(prevYearStr);
   const ytdPctVsPrev =
     ytdCurrent != null && ytdPrev
       ? Math.round(((ytdCurrent - ytdPrev) / ytdPrev) * 100)
       : undefined;
-
+  
   const latestYear = currentYearStr;
-
+  
   // ===== Visualizations order =====
   const visualizations = [
     { id: 'speciesYTD', title: 'YTD Adoptions by Species', subtitle: 'Dogs vs Cats (YTD) + YTD Total (gray) from CSV' },
+    { id: 'yearComparison', title: '2024 vs 2025 Monthly Comparison', subtitle: 'Year-over-year adoption trends by species' },
     { id: 'predictions', title: 'Seasonality & 2025 Predictions', subtitle: 'Avg-centered bands • Aug–Dec forecast' },
     { id: 'adoptions', title: 'Monthly Adoptions Breakdown', subtitle: '2025 Cats vs Dogs Trends' },
     { id: 'vaccines', title: 'Vaccine Clinics Performance', subtitle: 'All-Time Analysis' }
   ];
+  
   const [currentVizIndex, setCurrentVizIndex] = useState(0);
   const currentViz = visualizations[currentVizIndex];
   const goToPrevious = () => setCurrentVizIndex((prev) => (prev === 0 ? visualizations.length - 1 : prev - 1));
   const goToNext = () => setCurrentVizIndex((prev) => (prev === visualizations.length - 1 ? 0 : prev + 1));
-
+  
   // ===== Key metrics (YTD card uses spreadsheet-only YTD) =====
   const keyMetrics = [
     {
@@ -193,55 +261,55 @@ const DashboardCards = () => {
       trendColor: "text-green-600"
     },
     {
-  title: "Animals in Care VA",
-  value: "171",
-  subtitle: (
-    <div className="flex gap-4 mt-1">
-      <div className="flex items-center gap-1.5">
-        <div className="w-2 h-2 rounded-full bg-orange-400"></div>
-        <span className="text-xs font-medium">76 dogs</span>
-      </div>
-      <div className="flex items-center gap-1.5">
-        <div className="w-2 h-2 rounded-full bg-orange-300"></div>
-        <span className="text-xs font-medium">91 cats</span>
-      </div>
-    </div>
-  ),
-  comparison: "-27%",
-  comparisonText: "vs last week(173)",
-  trend: "up",
-  icon: MapPin,
-  bgColor: "bg-orange-50",
-  textColor: "text-orange-900",
-  valueColor: "text-orange-600",
-  trendColor: "text-red-600"
-},
+      title: "Animals in Care VA",
+      value: "171",
+      subtitle: (
+        <div className="flex gap-4 mt-1">
+          <div className="flex items-center gap-1.5">
+            <div className="w-2 h-2 rounded-full bg-orange-400"></div>
+            <span className="text-xs font-medium">76 dogs</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <div className="w-2 h-2 rounded-full bg-orange-300"></div>
+            <span className="text-xs font-medium">91 cats</span>
+          </div>
+        </div>
+      ),
+      comparison: "-27%",
+      comparisonText: "vs last week(173)",
+      trend: "up",
+      icon: MapPin,
+      bgColor: "bg-orange-50",
+      textColor: "text-orange-900",
+      valueColor: "text-orange-600",
+      trendColor: "text-red-600"
+    },
     {
-  title: "Animals in Care SC",
-  value: "108",
-  subtitle: (
-    <div className="flex gap-4 mt-1">
-      <div className="flex items-center gap-1.5">
-        <div className="w-2 h-2 rounded-full bg-pink-400"></div>
-        <span className="text-xs font-medium">87 dogs</span>
-      </div>
-      <div className="flex items-center gap-1.5">
-        <div className="w-2 h-2 rounded-full bg-pink-300"></div>
-        <span className="text-xs font-medium">21 cats</span>
-      </div>
-    </div>
-  ),
-  comparison: "11%",
-  comparisonText: "vs last week (97)",
-  trend: "up",
-  icon: MapPin,
-  bgColor: "bg-pink-50",
-  textColor: "text-pink-900",
-  valueColor: "text-pink-600",
-  trendColor: "text-green-600"
-}
+      title: "Animals in Care SC",
+      value: "108",
+      subtitle: (
+        <div className="flex gap-4 mt-1">
+          <div className="flex items-center gap-1.5">
+            <div className="w-2 h-2 rounded-full bg-pink-400"></div>
+            <span className="text-xs font-medium">87 dogs</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <div className="w-2 h-2 rounded-full bg-pink-300"></div>
+            <span className="text-xs font-medium">21 cats</span>
+          </div>
+        </div>
+      ),
+      comparison: "11%",
+      comparisonText: "vs last week (97)",
+      trend: "up",
+      icon: MapPin,
+      bgColor: "bg-pink-50",
+      textColor: "text-pink-900",
+      valueColor: "text-pink-600",
+      trendColor: "text-green-600"
+    }
   ];
-
+  
   // ===== Monthly 2025 breakdown cats vs dogs (kept) =====
   const monthly2025CatsVsDogs = [
     { month: 'Jan', dogs: 130, cats: 140, total: 270, dogPct: 48.1, catPct: 51.9 },
@@ -257,39 +325,7 @@ const DashboardCards = () => {
     { month: 'Nov', dogs: 178,  cats: 107,  total: 285, dogPct: 62, catPct: 38 },
     { month: 'Dec', dogs: 139,  cats: 105,  total: 244, dogPct: 57, catPct: 43 }
   ];
-
-  // // ===== Monthly 2025 breakdown cats vs dogs (kept) =====
-  // const monthly2024CatsVsDogs = [
-  //   { month: 'Jan', dogs: 120, cats: 150 },
-  //   { month: 'Feb', dogs: 95, cats: 105 },
-  //   { month: 'Mar', dogs: 110, cats: 130 },
-  //   { month: 'Apr', dogs: 115, cats: 125 },
-  //   { month: 'May', dogs: 125, cats: 135 },
-  //   { month: 'Jun', dogs: 130, cats: 140 },
-  //   { month: 'Jul', dogs: 140, cats: 120 },
-  //   { month: 'Aug', dogs: 160, cats: 115 },
-  //   { month: 'Sep', dogs: 150, cats: 125 },
-  //   { month: 'Oct', dogs: 145, cats: 110 },
-  //   { month: 'Nov', dogs: 135, cats: 100 },
-  //   { month: 'Dec', dogs: 155, cats: 125 }
-  // ];
-
-  // // Combine 2024 and 2025 data for comparison
-  // const yearOverYearComparison = useMemo(() => {
-  //   return monthly2025CatsVsDogs.map((m2025, idx) => {
-  //     const m2024 = monthly2024CatsVsDogs[idx];
-  //     return {
-  //       month: m2025.month,
-  //       dogs2024: m2024.dogs,
-  //       cats2024: m2024.cats,
-  //       dogs2025: m2025.dogs,
-  //       cats2025: m2025.cats,
-  //       total2024: m2024.dogs + m2024.cats,
-  //       total2025: m2025.total
-  //     };
-  //   });
-  // }, []);
-
+  
   // ===== Vaccine Clinics (kept) =====
   const allTimeVaccineData = [
     { date: 'Jun 28, 2024', interested: 55,  attended: 25,  totalAnimals: 75,  totalVaccines: 120, showUpRate: 45.5, microchips: 7,   cats: 36, dogs: 39 },
@@ -301,6 +337,7 @@ const DashboardCards = () => {
     { date: 'Jul 25, 2025', interested: 323, attended: 191, totalAnimals: 406, totalVaccines: 658, showUpRate: 59.1, microchips: 221, cats: 131, dogs: 275 },
     { date: 'Oct 3, 2025', interested: 297, attended: 175, totalAnimals: 341, totalVaccines: 563, showUpRate: 58.9, microchips: 208, cats: 103, dogs: 238 }
   ];
+  
   const july2025Services = [
     { name: 'DHP Vaccines', value: 209, color: '#10b981' },
     { name: 'Rabies Dog',   value: 224, color: '#ef4444' },
@@ -308,7 +345,7 @@ const DashboardCards = () => {
     { name: 'FVRCP',        value: 122, color: '#3b82f6' },
     { name: 'Rabies Cat',   value: 103, color: '#f59e0b' }
   ];
-
+  
   const oct2025Services = [
     { name: 'DHP Vaccines', value: 196, color: '#10b981' },
     { name: 'Rabies Dog',   value: 182, color: '#ef4444' },
@@ -316,15 +353,14 @@ const DashboardCards = () => {
     { name: 'FVRCP',        value: 94, color: '#3b82f6' },
     { name: 'Rabies Cat',   value: 91, color: '#f59e0b' }
   ];
-
-
-
+  
   // ===== Seasonality & 2025 Predictions (kept) =====
   const HIST = [
     { m: 1,  avg: 216.0 }, { m: 2,  avg: 172.75 }, { m: 3,  avg: 199.125 }, { m: 4,  avg: 197.125 },
     { m: 5,  avg: 213.875 }, { m: 6,  avg: 213.625 }, { m: 7,  avg: 190.625 }, { m: 8,  avg: 215.75 },
     { m: 9,  avg: 225.25 }, { m:10,  avg: 189.5 },   { m:11,  avg: 176.75 },  { m:12,  avg: 208.875 }
   ];
+  
   const ACTUAL_2025: Record<number, {adoptions:number, days:number}> = {
     1: { adoptions: 270, days: 31 },
     2: { adoptions: 211, days: 28 },
@@ -339,6 +375,7 @@ const DashboardCards = () => {
     11: { adoptions: 285, days: 30},
     12: { adoptions: 244, days: 31}
   };
+  
   const AUG_PRED = 299, SEP_PRED = 291, OCT_PRED = 218, NOV_PRED = 212, DEC_PRED = 286;
   const BAND_HALF_WIDTH = 50;
   const PRED_BY_MONTH: Record<string, number> = { Aug: AUG_PRED, Sep: SEP_PRED, Oct: OCT_PRED, Nov: NOV_PRED, Dec: DEC_PRED };
@@ -360,7 +397,7 @@ const DashboardCards = () => {
       else if (m === 10) actualOrPred = OCT_PRED;
       else if (m === 11) actualOrPred = NOV_PRED;
       else if (m === 12) actualOrPred = DEC_PRED;
-
+      
       return {
         month: MONTHS[idx],
         historical: Math.round(h.avg),
@@ -372,7 +409,7 @@ const DashboardCards = () => {
       };
     });
   }, []);
-
+  
   return (
     <div className="max-w-7xl mx-auto p-6 bg-white">
       {/* Header */}
@@ -438,7 +475,7 @@ const DashboardCards = () => {
             <ChevronRight className="h-6 w-6 text-gray-700" />
           </button>
         </div>
-
+        
         {/* 1) YTD by Species (dynamic from CSV) */}
         {currentViz.id === 'speciesYTD' && (
           <div className="bg-gray-50 p-6 rounded-lg">
@@ -459,7 +496,6 @@ const DashboardCards = () => {
                 />
                 <Legend />
                 {latestYear && <ReferenceLine x={latestYear} stroke="#e5e7eb" strokeWidth={2} />}
-
                 {/* Gray line = YTD Total (from CSV) */}
                 <Line
                   type="monotone"
@@ -470,7 +506,6 @@ const DashboardCards = () => {
                   activeDot={{ r: 6 }}
                   name="Total (YTD)"
                 />
-
                 {/* Species YTD lines */}
                 <Line type="monotone" dataKey="dogs" stroke="#3b82f6" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} name="Dogs (YTD)" />
                 <Line type="monotone" dataKey="cats" stroke="#10b981" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} name="Cats (YTD)" />
@@ -479,13 +514,133 @@ const DashboardCards = () => {
             <div className="text-xs text-gray-600 mt-3">
               <span className="font-semibold">Data rule:</span> YTD = adoptions through <strong>{cutoffLabel}</strong> of each year.
               {csvLoaded && ytdSpeciesForChart.length === 0 && (
-                <span className="ml-2 text-red-600">No rows parsed — check CSV path/headers (“Adoption Date”, “Species”).</span>
+                <span className="ml-2 text-red-600">No rows parsed — check CSV path/headers ("Adoption Date", "Species").</span>
               )}
             </div>
           </div>
         )}
+        
+        {/* 2) Year-over-Year Comparison (NEW!) */}
+        {currentViz.id === 'yearComparison' && (
+          <div className="bg-gray-50 p-6 rounded-lg">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold text-gray-900">2024 vs 2025 Monthly Adoptions</h3>
+              
+              {/* Filter Buttons */}
+              <div className="flex gap-2 bg-white p-1 rounded-lg shadow-sm border border-gray-200">
+                <button
+                  onClick={() => setComparisonFilter('total')}
+                  className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                    comparisonFilter === 'total'
+                      ? 'bg-gradient-to-r from-blue-500 to-green-500 text-white shadow-md'
+                      : 'text-gray-600 hover:bg-gray-100'
+                  }`}
+                >
+                  Total
+                </button>
+                <button
+                  onClick={() => setComparisonFilter('dogs')}
+                  className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                    comparisonFilter === 'dogs'
+                      ? 'bg-blue-600 text-white shadow-md'
+                      : 'text-gray-600 hover:bg-gray-100'
+                  }`}
+                >
+                  Dogs Only
+                </button>
+                <button
+                  onClick={() => setComparisonFilter('cats')}
+                  className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                    comparisonFilter === 'cats'
+                      ? 'bg-green-600 text-white shadow-md'
+                      : 'text-gray-600 hover:bg-gray-100'
+                  }`}
+                >
+                  Cats Only
+                </button>
+              </div>
+            </div>
 
-        {/* 2) Seasonality & Predictions */}
+            <ResponsiveContainer width="100%" height={450}>
+              <BarChart data={yearOverYearData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="month" />
+                <YAxis label={{ value: 'Number of Adoptions', angle: -90, position: 'insideLeft' }} />
+                <Tooltip 
+                  formatter={(value: any, name: string) => {
+                    const label = 
+                      name === 'dogs2024' ? 'Dogs 2024' :
+                      name === 'dogs2025' ? 'Dogs 2025' :
+                      name === 'cats2024' ? 'Cats 2024' :
+                      name === 'cats2025' ? 'Cats 2025' :
+                      name === 'total2024' ? 'Total 2024' :
+                      name === 'total2025' ? 'Total 2025' : name;
+                    return [`${value} adoptions`, label];
+                  }}
+                />
+                <Legend />
+                
+                {/* Conditionally render bars based on filter */}
+                {comparisonFilter === 'total' && (
+                  <>
+                    <Bar dataKey="total2024" fill="#3b82f6" name="Total 2024" />
+                    <Bar dataKey="total2025" fill="#10b981" name="Total 2025" />
+                  </>
+                )}
+                {comparisonFilter === 'dogs' && (
+                  <>
+                    <Bar dataKey="dogs2024" fill="#3b82f6" name="Dogs 2024" />
+                    <Bar dataKey="dogs2025" fill="#10b981" name="Dogs 2025" />
+                  </>
+                )}
+                {comparisonFilter === 'cats' && (
+                  <>
+                    <Bar dataKey="cats2024" fill="#3b82f6" name="Cats 2024" />
+                    <Bar dataKey="cats2025" fill="#10b981" name="Cats 2025" />
+                  </>
+                )}
+              </BarChart>
+            </ResponsiveContainer>
+
+            {/* Insight Cards
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+              <div className="bg-blue-50 p-6 rounded-lg">
+                <h4 className="text-lg font-semibold text-blue-900 mb-3">2025 Wins</h4>
+                <ul className="text-sm text-blue-800 space-y-2">
+                  {yearOverYearData.map((d) => {
+                    const improvement2025 = d.total2025 - d.total2024;
+                    return improvement2025 > 0 ? (
+                      <li key={d.month}>
+                        <strong>{d.month}:</strong> +{improvement2025} adoptions ({d.total2025} vs {d.total2024})
+                      </li>
+                    ) : null;
+                  }).filter(Boolean).slice(0, 5)}
+                </ul>
+              </div>
+              
+              <div className="bg-orange-50 p-6 rounded-lg">
+                <h4 className="text-lg font-semibold text-orange-900 mb-3">2024 Was Stronger</h4>
+                <ul className="text-sm text-orange-800 space-y-2">
+                  {yearOverYearData.map((d) => {
+                    const decline2025 = d.total2024 - d.total2025;
+                    return decline2025 > 0 ? (
+                      <li key={d.month}>
+                        <strong>{d.month}:</strong> -{decline2025} adoptions ({d.total2025} vs {d.total2024})
+                      </li>
+                    ) : null;
+                  }).filter(Boolean).slice(0, 5)}
+                </ul>
+              </div>
+            </div> */}
+
+            <div className="text-xs text-gray-600 mt-3">
+              <span className="font-semibold">Data source:</span> Computed from adoptions_by_species.csv. 
+              Blue = 2024, Green = 2025.
+            </div>
+          </div>
+        )}
+        
+        {/* 3) Seasonality & Predictions */}
         {currentViz.id === 'predictions' && (
           <div className="bg-gray-50 p-6 rounded-lg">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Historical Seasonality & 2025 Actual/Prediction</h3>
@@ -500,14 +655,12 @@ const DashboardCards = () => {
                 <ReferenceArea x1="Aug" x2="Sep" fill="#10b981" fillOpacity={0.08} stroke="none" />
                 <ReferenceArea x1="Feb" x2="Mar" fill="#ef4444" fillOpacity={0.06} stroke="none" />
                 <ReferenceArea x1="Oct" x2="Nov" fill="#ef4444" fillOpacity={0.06} stroke="none" />
-
                 <Tooltip
                   content={({ active, payload }) => {
                     if (active && payload && payload[0]) {
                       const d = payload[0].payload as any;
                       const isPeak = (d.month === 'May' || d.month === 'Jun' || d.month === 'Aug' || d.month === 'Sep');
                       const isDip  = (d.month === 'Feb' || d.month === 'Mar' || d.month === 'Oct' || d.month === 'Nov');
-
                       return (
                         <div className="bg-white p-3 rounded shadow-lg border">
                           <p className="font-semibold">{d.month} 2025</p>
@@ -554,8 +707,8 @@ const DashboardCards = () => {
             </div>
           </div>
         )}
-
-        {/* 3) Monthly Adoptions Visualization */}
+        
+        {/* 4) Monthly Adoptions Visualization */}
         {currentViz.id === 'adoptions' && (
           <div>
             <div className="bg-gray-50 p-6 rounded-lg">
@@ -606,9 +759,8 @@ const DashboardCards = () => {
             </div>
           </div>
         )}
-
-
-        {/* 4) Vaccine Clinics Visualization */}
+        
+        {/* 5) Vaccine Clinics Visualization */}
         {currentViz.id === 'vaccines' && (
           <div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -667,9 +819,8 @@ const DashboardCards = () => {
                   </div>
                 </div>
               </div>
-
-
-                            <div className="bg-gray-50 p-6 rounded-lg">
+              
+              <div className="bg-gray-50 p-6 rounded-lg">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">July 25, 2025 - Record Clinic Breakdown</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
