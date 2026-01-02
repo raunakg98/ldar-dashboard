@@ -163,7 +163,12 @@ const DashboardCards = () => {
     });
   }, []);
   
-  const reportDate = useMemo(() => new Date(), []);
+  // const reportDate = useMemo(() => new Date(), []);
+
+  // const reportDate = useMemo(() => new Date('2025-12-31'), []);
+
+const reportDate = useMemo(() => new Date(2025, 11, 31), []);
+
   const cutoffLabel = reportDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
   
   // === Build YTD & Full-year datasets from the spreadsheet ===
@@ -232,9 +237,9 @@ const DashboardCards = () => {
     },
     {
       title: "Dec 2025",
-      value: "244",
+      value: "250",
       subtitle: "projected 210-225",
-      comparison: "+1%",
+      comparison: "+4%",
       comparisonText: "vs Dec 2024(240)",
       trend: "up",
       icon: Calendar,
@@ -323,7 +328,7 @@ const DashboardCards = () => {
     { month: 'Sep', dogs: 143,  cats: 112,  total: 255, dogPct: 56, catPct: 44 },
     { month: 'Oct', dogs: 155,  cats: 95,  total: 250, dogPct: 62, catPct: 38 },
     { month: 'Nov', dogs: 178,  cats: 107,  total: 285, dogPct: 62, catPct: 38 },
-    { month: 'Dec', dogs: 139,  cats: 105,  total: 244, dogPct: 57, catPct: 43 }
+    { month: 'Dec', dogs: 140,  cats: 110,  total: 250, dogPct: 56, catPct: 44 }
   ];
   
   // ===== Vaccine Clinics (kept) =====
@@ -373,7 +378,7 @@ const DashboardCards = () => {
     9: { adoptions: 255, days: 30 },
     10: { adoptions: 250, days: 31 },
     11: { adoptions: 285, days: 30},
-    12: { adoptions: 244, days: 31}
+    12: { adoptions: 250, days: 31}
   };
   
   const AUG_PRED = 299, SEP_PRED = 291, OCT_PRED = 218, NOV_PRED = 212, DEC_PRED = 286;
@@ -737,7 +742,7 @@ const DashboardCards = () => {
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-              <div className="bg-blue-50 p-6 rounded-lg">
+              {/* <div className="bg-blue-50 p-6 rounded-lg">
                 <h4 className="text-lg font-semibold text-blue-900 mb-3">The Pattern Until June</h4>
                 <ul className="text-sm text-blue-800 space-y-2">
                   <li><strong>Consistent cat majority:</strong> 51-52% cats across Jan-Jun</li>
@@ -745,9 +750,9 @@ const DashboardCards = () => {
                   <li><strong>Peak performance:</strong> June hit 303 total adoptions</li>
                   <li><strong>Predictable trend:</strong> 2025 looked like the "Year of the Cat"</li>
                 </ul>
-              </div>
+              </div> */}
               
-              <div className="bg-red-50 p-6 rounded-lg">
+              {/* <div className="bg-red-50 p-6 rounded-lg">
                 <h4 className="text-lg font-semibold text-red-900 mb-3">July's Dramatic Shift</h4>
                 <ul className="text-sm text-red-800 space-y-2">
                   <li><strong>Dogs surge to 64.9%:</strong> +17 point jump from June's 47.9%</li>
@@ -755,7 +760,7 @@ const DashboardCards = () => {
                   <li><strong>168 vs 91:</strong> Nearly 2:1 dog-to-cat ratio</li>
                   <li><strong>Breaking the pattern:</strong> Highest dog month since early 2024</li>
                 </ul>
-              </div>
+              </div> */}
             </div>
           </div>
         )}
