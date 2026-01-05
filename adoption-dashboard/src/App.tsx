@@ -397,12 +397,12 @@ const DashboardCards = () => {
     }] : []),
     {
       title: "Animals in Foster Care",
-      value: "126",
+      value: "110",
       subtitle: (
         <div className="text-xs space-y-1">
-          <div>15 dogs in boarding</div>
-          <div>9 cats at PetSmart</div>
-          <div>21 cats at Meow Maison</div>
+          <div>13 dogs in boarding</div>
+          <div>7 cats at PetSmart</div>
+          <div>18 cats at Meow Maison</div>
         </div>
       ),
       trend: "up",
@@ -414,21 +414,21 @@ const DashboardCards = () => {
     },
     {
       title: "Animals in Care VA",
-      value: "171",
+      value: "150",
       subtitle: (
         <div className="flex gap-4 mt-1">
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-orange-400"></div>
-            <span className="text-xs font-medium">76 dogs</span>
+            <span className="text-xs font-medium">90 dogs</span>
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-orange-300"></div>
-            <span className="text-xs font-medium">91 cats</span>
+            <span className="text-xs font-medium">60 cats</span>
           </div>
         </div>
       ),
-      comparison: "-27%",
-      comparisonText: "vs last week (173)",
+      comparison: "-12%",
+      comparisonText: "vs last week (171)",
       trend: "down",
       icon: MapPin,
       bgColor: "bg-orange-50",
@@ -438,21 +438,21 @@ const DashboardCards = () => {
     },
     {
       title: "Animals in Care SC",
-      value: "108",
+      value: "66",
       subtitle: (
         <div className="flex gap-4 mt-1">
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-pink-400"></div>
-            <span className="text-xs font-medium">87 dogs</span>
+            <span className="text-xs font-medium">66 dogs</span>
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-pink-300"></div>
-            <span className="text-xs font-medium">21 cats</span>
+            <span className="text-xs font-medium">14 cats</span>
           </div>
         </div>
       ),
-      comparison: "+11%",
-      comparisonText: "vs last week (97)",
+      comparison: "-38%",
+      comparisonText: "vs last week (108)",
       trend: "up",
       icon: MapPin,
       bgColor: "bg-pink-50",
