@@ -5,12 +5,12 @@ import { TrendingUp, TrendingDown, Heart, Calendar, MapPin, ChevronLeft, Chevron
 import {
   Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Bar,
   ResponsiveContainer, ComposedChart, PieChart, Pie, Cell, Area,
-  ReferenceArea, ReferenceDot, ReferenceLine, BarChart
+  ReferenceArea, ReferenceDot, ReferenceLine
 } from 'recharts';
 
 type SpeciesRow = {
-  ['Adoption Date']: string; // e.g., "2025-08-15"
-  Species: string;           // "Dog" | "Cat"
+  ['Adoption Date']: string;
+  Species: string;
 };
 
 type YTDPoint = { year: string; dogs: number; cats: number };
@@ -21,8 +21,11 @@ type MonthlyComparisonPoint = {
   cats2024: number;
   dogs2025: number;
   cats2025: number;
+  dogs2026: number;
+  cats2026: number;
   total2024: number;
   total2025: number;
+  total2026: number;
 };
 
 function formatInt(n: number | undefined) {
@@ -67,44 +70,19 @@ function computeYTDBySpecies(rows: SpeciesRow[], now: Date = new Date()): YTDPoi
   }));
 }
 
-/** Full-year totals by species (no cutoff). */
-function computeFullYearTotalsBySpecies(rows: SpeciesRow[], now: Date = new Date()): YTDPoint[] {
-  const currentYear = toYear(now);
-  const agg: Record<string, { dogs: number; cats: number }> = {};
-  
-  for (const r of rows) {
-    const dt = new Date(r['Adoption Date']);
-    if (Number.isNaN(dt.getTime())) continue;
-    const y = String(dt.getFullYear());
-    const sp = (r.Species || '').trim().toLowerCase();
-    if (!agg[y]) agg[y] = { dogs: 0, cats: 0 };
-    if (sp === 'dog') agg[y].dogs += 1;
-    if (sp === 'cat') agg[y].cats += 1;
-  }
-  
-  const yearsToShow = rangeYears(2021, currentYear);
-  return yearsToShow.map((y) => ({
-    year: y,
-    dogs: agg[y]?.dogs ?? 0,
-    cats: agg[y]?.cats ?? 0,
-  }));
-}
-
-/** Compute monthly 2024 vs 2025 comparison from CSV */
-function computeMonthlyComparison(rows: SpeciesRow[]): MonthlyComparisonPoint[] {
+/** Compute monthly comparison for any years */
+function computeMonthlyComparisonMultiYear(rows: SpeciesRow[], years: string[]): MonthlyComparisonPoint[] {
   const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   
-  // Initialize aggregation structure
-  const agg: Record<string, Record<number, { dogs: number; cats: number }>> = {
-    '2024': {},
-    '2025': {}
-  };
+  const agg: Record<string, Record<number, { dogs: number; cats: number }>> = {};
   
-  // Initialize all months to 0
-  for (let m = 1; m <= 12; m++) {
-    agg['2024'][m] = { dogs: 0, cats: 0 };
-    agg['2025'][m] = { dogs: 0, cats: 0 };
-  }
+  // Initialize all years and months
+  years.forEach(year => {
+    agg[year] = {};
+    for (let m = 1; m <= 12; m++) {
+      agg[year][m] = { dogs: 0, cats: 0 };
+    }
+  });
   
   // Aggregate data from CSV
   for (const r of rows) {
@@ -112,10 +90,9 @@ function computeMonthlyComparison(rows: SpeciesRow[]): MonthlyComparisonPoint[] 
     if (Number.isNaN(dt.getTime())) continue;
     
     const year = String(dt.getFullYear());
-    const month = dt.getMonth() + 1; // 1-12
+    const month = dt.getMonth() + 1;
     
-    // Only process 2024 and 2025
-    if (year !== '2024' && year !== '2025') continue;
+    if (!years.includes(year)) continue;
     
     const sp = (r.Species || '').trim().toLowerCase();
     if (!agg[year][month]) agg[year][month] = { dogs: 0, cats: 0 };
@@ -127,8 +104,9 @@ function computeMonthlyComparison(rows: SpeciesRow[]): MonthlyComparisonPoint[] 
   // Build the comparison data
   return MONTHS.map((monthName, idx) => {
     const m = idx + 1;
-    const data2024 = agg['2024'][m] || { dogs: 0, cats: 0 };
-    const data2025 = agg['2025'][m] || { dogs: 0, cats: 0 };
+    const data2024 = agg['2024']?.[m] || { dogs: 0, cats: 0 };
+    const data2025 = agg['2025']?.[m] || { dogs: 0, cats: 0 };
+    const data2026 = agg['2026']?.[m] || { dogs: 0, cats: 0 };
     
     return {
       month: monthName,
@@ -136,18 +114,41 @@ function computeMonthlyComparison(rows: SpeciesRow[]): MonthlyComparisonPoint[] 
       cats2024: data2024.cats,
       dogs2025: data2025.dogs,
       cats2025: data2025.cats,
+      dogs2026: data2026.dogs,
+      cats2026: data2026.cats,
       total2024: data2024.dogs + data2024.cats,
-      total2025: data2025.dogs + data2025.cats
+      total2025: data2025.dogs + data2025.cats,
+      total2026: data2026.dogs + data2026.cats,
     };
   });
 }
 
+/** Get data for a specific month and year */
+function getMonthData(yearOverYearData: MonthlyComparisonPoint[], monthIndex: number, year: '2024' | '2025' | '2026') {
+  const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const monthName = MONTHS[monthIndex];
+  const monthData = yearOverYearData.find(d => d.month === monthName);
+  if (!monthData) return null;
+  
+  switch(year) {
+    case '2024':
+      return monthData.total2024;
+    case '2025':
+      return monthData.total2025;
+    case '2026':
+      return monthData.total2026;
+  }
+}
+
 const DashboardCards = () => {
-  // ===== Load CSV =====
+  // ===== State Management =====
   const [speciesRows, setSpeciesRows] = useState<SpeciesRow[]>([]);
   const [csvLoaded, setCsvLoaded] = useState(false);
   const [comparisonFilter, setComparisonFilter] = useState<'total' | 'dogs' | 'cats'>('total');
+  const [selectedYear, setSelectedYear] = useState<2025 | 2026>(2025);
+  const [currentVizIndex, setCurrentVizIndex] = useState(0);
   
+  // ===== Load CSV =====
   useEffect(() => {
     Papa.parse('/data/adoptions_by_species.csv', {
       download: true,
@@ -163,32 +164,33 @@ const DashboardCards = () => {
     });
   }, []);
   
-  // const reportDate = useMemo(() => new Date(), []);
-
-  // const reportDate = useMemo(() => new Date('2025-12-31'), []);
-
-const reportDate = useMemo(() => new Date(2025, 11, 31), []);
-
+  // ===== Dynamic Report Date Based on Selected Year =====
+  const reportDate = useMemo(() => {
+    if (selectedYear === 2025) {
+      return new Date(2025, 11, 31); // December 31, 2025
+    } else {
+      return new Date(); // Current date for 2026
+    }
+  }, [selectedYear]);
+  
   const cutoffLabel = reportDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+  const currentMonth = reportDate.getMonth(); // 0-11
+  const currentMonthName = reportDate.toLocaleDateString(undefined, { month: 'short' });
+  const currentMonthFullName = reportDate.toLocaleDateString(undefined, { month: 'long' });
   
-  // === Build YTD & Full-year datasets from the spreadsheet ===
+  // ===== Compute Data =====
   const ytdSpeciesData = useMemo(() => computeYTDBySpecies(speciesRows, reportDate), [speciesRows, reportDate]);
-  const totalSpeciesData = useMemo(() => computeFullYearTotalsBySpecies(speciesRows, reportDate), [speciesRows, reportDate]);
-  const yearOverYearData = useMemo(() => computeMonthlyComparison(speciesRows), [speciesRows]);
+  const yearOverYearData = useMemo(() => computeMonthlyComparisonMultiYear(speciesRows, ['2024', '2025', '2026']), [speciesRows]);
   
-  // Merge into one array for the first chart: YTD species + TOTAL(YTD) + (keep full-year totals if needed later)
   type ChartYTDPoint = YTDPoint & { total: number; totalYTD: number };
   const ytdSpeciesForChart: ChartYTDPoint[] = useMemo(() => {
-    const totalsMap = new Map(totalSpeciesData.map(t => [t.year, t]));
     return ytdSpeciesData.map((ytd) => {
-      const t = totalsMap.get(ytd.year);
-      const totalFull = (t?.dogs ?? 0) + (t?.cats ?? 0);
       const totalYTD = (ytd.dogs ?? 0) + (ytd.cats ?? 0);
-      return { ...ytd, total: totalFull, totalYTD };
+      return { ...ytd, total: totalYTD, totalYTD };
     });
-  }, [ytdSpeciesData, totalSpeciesData]);
+  }, [ytdSpeciesData]);
   
-  // === YTD metric card (compare current year YTD vs previous year YTD) ===
+  // ===== YTD Metrics =====
   const currentYearStr = String(reportDate.getFullYear());
   const prevYearStr = String(reportDate.getFullYear() - 1);
   
@@ -206,28 +208,52 @@ const reportDate = useMemo(() => new Date(2025, 11, 31), []);
   
   const latestYear = currentYearStr;
   
-  // ===== Visualizations order =====
-  const visualizations = [
+  // ===== Current Month Metrics (Dynamic from CSV) =====
+  const currentMonthCurrent = getMonthData(yearOverYearData, currentMonth, selectedYear === 2025 ? '2025' : '2026');
+  const currentMonthPrev = getMonthData(yearOverYearData, currentMonth, selectedYear === 2025 ? '2024' : '2025');
+  
+  const currentMonthPct = currentMonthCurrent && currentMonthPrev 
+    ? Math.round(((currentMonthCurrent - currentMonthPrev) / currentMonthPrev) * 100)
+    : null;
+  
+  // ===== Visualization Definitions =====
+  const visualizations2025 = [
     { id: 'speciesYTD', title: 'YTD Adoptions by Species', subtitle: 'Dogs vs Cats (YTD) + YTD Total (gray) from CSV' },
     { id: 'yearComparison', title: '2024 vs 2025 Monthly Comparison', subtitle: 'Year-over-year adoption trends by species' },
-    { id: 'predictions', title: 'Seasonality & 2025 Predictions', subtitle: 'Avg-centered bands • Aug–Dec forecast' },
+    { id: 'predictions', title: 'Seasonality & 2025 Analysis', subtitle: 'Historical patterns and 2025 actual data' },
     { id: 'adoptions', title: 'Monthly Adoptions Breakdown', subtitle: '2025 Cats vs Dogs Trends' },
     { id: 'vaccines', title: 'Vaccine Clinics Performance', subtitle: 'All-Time Analysis' }
   ];
   
-  const [currentVizIndex, setCurrentVizIndex] = useState(0);
-  const currentViz = visualizations[currentVizIndex];
+  const visualizations2026 = [
+    { id: 'speciesYTD', title: 'YTD Adoptions by Species', subtitle: 'Dogs vs Cats (YTD) including 2026 data' },
+    { id: 'yearComparison', title: '2025 vs 2026 Monthly Comparison', subtitle: 'Year-over-year adoption trends' },
+  ];
+  
+  const visualizations = selectedYear === 2025 ? visualizations2025 : visualizations2026;
+  
+  // Safe current visualization index
+  const safeCurrentVizIndex = Math.min(currentVizIndex, visualizations.length - 1);
+  const currentViz = visualizations[safeCurrentVizIndex];
+  
   const goToPrevious = () => setCurrentVizIndex((prev) => (prev === 0 ? visualizations.length - 1 : prev - 1));
   const goToNext = () => setCurrentVizIndex((prev) => (prev === visualizations.length - 1 ? 0 : prev + 1));
   
-  // ===== Key metrics (YTD card uses spreadsheet-only YTD) =====
-  const keyMetrics = [
+  // Reset visualization index when changing years if out of bounds
+  useEffect(() => {
+    if (currentVizIndex >= visualizations.length) {
+      setCurrentVizIndex(0);
+    }
+  }, [selectedYear, currentVizIndex, visualizations.length]);
+  
+  // ===== Key Metrics =====
+  const keyMetrics2025 = [
     {
-      title: "YTD Adoptions",
-      value: formatInt(ytdCurrent),
-      subtitle: `through ${cutoffLabel}`,
+      title: "2025 YTD Adoptions",
+      value: formatInt(findYTDTotal('2025')),
+      subtitle: `through Dec 31`,
       comparison: ytdPctVsPrev != null ? `${ytdPctVsPrev > 0 ? '+' : ''}${ytdPctVsPrev}%` : undefined,
-      comparisonText: ytdPrev != null ? `vs ${prevYearStr} YTD (${formatInt(ytdPrev)})` : undefined,
+      comparisonText: `vs 2024 YTD (${formatInt(findYTDTotal('2024'))})`,
       trend: ytdPctVsPrev != null ? (ytdPctVsPrev >= 0 ? 'up' : 'down') : 'up',
       icon: Heart,
       bgColor: "bg-blue-50",
@@ -236,23 +262,23 @@ const reportDate = useMemo(() => new Date(2025, 11, 31), []);
       trendColor: ytdPctVsPrev != null ? (ytdPctVsPrev >= 0 ? "text-green-600" : "text-red-600") : "text-green-600"
     },
     {
-      title: "Dec 2025",
-      value: "250",
-      subtitle: "projected 210-225",
-      comparison: "+4%",
-      comparisonText: "vs Dec 2024(240)",
-      trend: "up",
+      title: `${currentMonthFullName} 2025`,
+      value: formatInt(currentMonthCurrent),
+      subtitle: `actual adoptions`,
+      comparison: currentMonthPct != null ? `${currentMonthPct > 0 ? '+' : ''}${currentMonthPct}%` : undefined,
+      comparisonText: currentMonthPrev ? `vs ${currentMonthName} 2024 (${formatInt(currentMonthPrev)})` : undefined,
+      trend: currentMonthPct != null ? (currentMonthPct >= 0 ? 'up' : 'down') : 'up',
       icon: Calendar,
       bgColor: "bg-green-50",
       textColor: "text-green-900",
       valueColor: "text-green-600",
-      trendColor: "text-green-600"
+      trendColor: currentMonthPct != null ? (currentMonthPct >= 0 ? "text-green-600" : "text-red-600") : "text-green-600"
     },
     {
       title: "Animals in Foster Care",
       value: "126",
       subtitle: (
-        <div>
+        <div className="text-xs space-y-1">
           <div>15 dogs in boarding</div>
           <div>9 cats at PetSmart</div>
           <div>21 cats at Meow Maison</div>
@@ -281,8 +307,8 @@ const reportDate = useMemo(() => new Date(2025, 11, 31), []);
         </div>
       ),
       comparison: "-27%",
-      comparisonText: "vs last week(173)",
-      trend: "up",
+      comparisonText: "vs last week (173)",
+      trend: "down",
       icon: MapPin,
       bgColor: "bg-orange-50",
       textColor: "text-orange-900",
@@ -304,7 +330,7 @@ const reportDate = useMemo(() => new Date(2025, 11, 31), []);
           </div>
         </div>
       ),
-      comparison: "11%",
+      comparison: "+11%",
       comparisonText: "vs last week (97)",
       trend: "up",
       icon: MapPin,
@@ -315,7 +341,39 @@ const reportDate = useMemo(() => new Date(2025, 11, 31), []);
     }
   ];
   
-  // ===== Monthly 2025 breakdown cats vs dogs (kept) =====
+  const keyMetrics2026 = [
+    {
+      title: "2026 YTD Adoptions",
+      value: formatInt(ytdCurrent),
+      subtitle: `through ${cutoffLabel}`,
+      comparison: ytdPctVsPrev != null ? `${ytdPctVsPrev > 0 ? '+' : ''}${ytdPctVsPrev}%` : undefined,
+      comparisonText: ytdPrev != null ? `vs 2025 YTD (${formatInt(ytdPrev)})` : undefined,
+      trend: ytdPctVsPrev != null ? (ytdPctVsPrev >= 0 ? 'up' : 'down') : 'up',
+      icon: Heart,
+      bgColor: "bg-blue-50",
+      textColor: "text-blue-900",
+      valueColor: "text-blue-600",
+      trendColor: ytdPctVsPrev != null ? (ytdPctVsPrev >= 0 ? "text-green-600" : "text-red-600") : "text-green-600"
+    },
+    // Conditionally add current month card if data exists
+    ...(currentMonthCurrent && currentMonthCurrent > 0 ? [{
+      title: `${currentMonthFullName} 2026`,
+      value: formatInt(currentMonthCurrent),
+      subtitle: `actual adoptions`,
+      comparison: currentMonthPct != null ? `${currentMonthPct > 0 ? '+' : ''}${currentMonthPct}%` : undefined,
+      comparisonText: currentMonthPrev ? `vs ${currentMonthName} 2025 (${formatInt(currentMonthPrev)})` : undefined,
+      trend: currentMonthPct != null ? (currentMonthPct >= 0 ? 'up' : 'down') : 'up' as const,
+      icon: Calendar,
+      bgColor: "bg-green-50",
+      textColor: "text-green-900",
+      valueColor: "text-green-600",
+      trendColor: currentMonthPct != null ? (currentMonthPct >= 0 ? "text-green-600" : "text-red-600") : "text-green-600"
+    }] : [])
+  ];
+  
+  const keyMetrics = selectedYear === 2025 ? keyMetrics2025 : keyMetrics2026;
+  
+  // ===== 2025 Static Data =====
   const monthly2025CatsVsDogs = [
     { month: 'Jan', dogs: 130, cats: 140, total: 270, dogPct: 48.1, catPct: 51.9 },
     { month: 'Feb', dogs: 101, cats: 110, total: 211, dogPct: 47.9, catPct: 52.1 },
@@ -323,24 +381,23 @@ const reportDate = useMemo(() => new Date(2025, 11, 31), []);
     { month: 'Apr', dogs: 104, cats: 113, total: 217, dogPct: 47.9, catPct: 52.1 },
     { month: 'May', dogs: 136, cats: 148, total: 284, dogPct: 47.9, catPct: 52.1 },
     { month: 'Jun', dogs: 145, cats: 158, total: 303, dogPct: 47.9, catPct: 52.1 },
-    { month: 'Jul', dogs: 171, cats: 96,  total: 267, dogPct: 66.8, catPct: 33.2 },
+    { month: 'Jul', dogs: 171, cats: 96,  total: 267, dogPct: 64.0, catPct: 36.0 },
     { month: 'Aug', dogs: 177, cats: 127, total: 304, dogPct: 58.2, catPct: 41.8 },
-    { month: 'Sep', dogs: 143,  cats: 112,  total: 255, dogPct: 56, catPct: 44 },
-    { month: 'Oct', dogs: 155,  cats: 95,  total: 250, dogPct: 62, catPct: 38 },
-    { month: 'Nov', dogs: 178,  cats: 107,  total: 285, dogPct: 62, catPct: 38 },
-    { month: 'Dec', dogs: 140,  cats: 110,  total: 250, dogPct: 56, catPct: 44 }
+    { month: 'Sep', dogs: 143, cats: 112, total: 255, dogPct: 56.1, catPct: 43.9 },
+    { month: 'Oct', dogs: 155, cats: 95,  total: 250, dogPct: 62.0, catPct: 38.0 },
+    { month: 'Nov', dogs: 178, cats: 107, total: 285, dogPct: 62.5, catPct: 37.5 },
+    { month: 'Dec', dogs: 140, cats: 110, total: 250, dogPct: 56.0, catPct: 44.0 }
   ];
   
-  // ===== Vaccine Clinics (kept) =====
   const allTimeVaccineData = [
     { date: 'Jun 28, 2024', interested: 55,  attended: 25,  totalAnimals: 75,  totalVaccines: 120, showUpRate: 45.5, microchips: 7,   cats: 36, dogs: 39 },
     { date: 'Jul 27, 2024', interested: 117, attended: 59,  totalAnimals: 232, totalVaccines: 220, showUpRate: 50.4, microchips: 0,   cats: 62, dogs: 170 },
     { date: 'Sep 13, 2024', interested: 122, attended: 74,  totalAnimals: 165, totalVaccines: 270, showUpRate: 60.7, microchips: 83,  cats: 76, dogs: 89 },
-    { date: 'Dec 7, 2024', interested: 85,  attended: 63,  totalAnimals: 144, totalVaccines: 226, showUpRate: 74.1, microchips: 83,  cats: 52, dogs: 92 },
+    { date: 'Dec 7, 2024',  interested: 85,  attended: 63,  totalAnimals: 144, totalVaccines: 226, showUpRate: 74.1, microchips: 83,  cats: 52, dogs: 92 },
     { date: 'Feb 22, 2025', interested: 163, attended: 24,  totalAnimals: 207, totalVaccines: 298, showUpRate: 14.7, microchips: 125, cats: 64, dogs: 143 },
     { date: 'May 8, 2025',  interested: 91,  attended: 53,  totalAnimals: 114, totalVaccines: 137, showUpRate: 58.2, microchips: 70,  cats: 30, dogs: 84 },
     { date: 'Jul 25, 2025', interested: 323, attended: 191, totalAnimals: 406, totalVaccines: 658, showUpRate: 59.1, microchips: 221, cats: 131, dogs: 275 },
-    { date: 'Oct 3, 2025', interested: 297, attended: 175, totalAnimals: 341, totalVaccines: 563, showUpRate: 58.9, microchips: 208, cats: 103, dogs: 238 }
+    { date: 'Oct 3, 2025',  interested: 297, attended: 175, totalAnimals: 341, totalVaccines: 563, showUpRate: 58.9, microchips: 208, cats: 103, dogs: 238 }
   ];
   
   const july2025Services = [
@@ -355,37 +412,24 @@ const reportDate = useMemo(() => new Date(2025, 11, 31), []);
     { name: 'DHP Vaccines', value: 196, color: '#10b981' },
     { name: 'Rabies Dog',   value: 182, color: '#ef4444' },
     { name: 'Microchips',   value: 208, color: '#8b5cf6' },
-    { name: 'FVRCP',        value: 94, color: '#3b82f6' },
-    { name: 'Rabies Cat',   value: 91, color: '#f59e0b' }
+    { name: 'FVRCP',        value: 94,  color: '#3b82f6' },
+    { name: 'Rabies Cat',   value: 91,  color: '#f59e0b' }
   ];
   
-  // ===== Seasonality & 2025 Predictions (kept) =====
   const HIST = [
-    { m: 1,  avg: 216.0 }, { m: 2,  avg: 172.75 }, { m: 3,  avg: 199.125 }, { m: 4,  avg: 197.125 },
+    { m: 1,  avg: 216.0 },   { m: 2,  avg: 172.75 },  { m: 3,  avg: 199.125 }, { m: 4,  avg: 197.125 },
     { m: 5,  avg: 213.875 }, { m: 6,  avg: 213.625 }, { m: 7,  avg: 190.625 }, { m: 8,  avg: 215.75 },
-    { m: 9,  avg: 225.25 }, { m:10,  avg: 189.5 },   { m:11,  avg: 176.75 },  { m:12,  avg: 208.875 }
+    { m: 9,  avg: 225.25 },  { m: 10, avg: 189.5 },   { m: 11, avg: 176.75 },  { m: 12, avg: 208.875 }
   ];
   
   const ACTUAL_2025: Record<number, {adoptions:number, days:number}> = {
-    1: { adoptions: 270, days: 31 },
-    2: { adoptions: 211, days: 28 },
-    3: { adoptions: 279, days: 31 },
-    4: { adoptions: 217, days: 30 },
-    5: { adoptions: 284, days: 31 },
-    6: { adoptions: 303, days: 30 },
-    7: { adoptions: 267, days: 31 },
-    8: { adoptions: 304, days: 31 },
-    9: { adoptions: 255, days: 30 },
-    10: { adoptions: 250, days: 31 },
-    11: { adoptions: 285, days: 30},
-    12: { adoptions: 250, days: 31}
+    1: { adoptions: 270, days: 31 }, 2: { adoptions: 211, days: 28 }, 3: { adoptions: 279, days: 31 },
+    4: { adoptions: 217, days: 30 }, 5: { adoptions: 284, days: 31 }, 6: { adoptions: 303, days: 30 },
+    7: { adoptions: 267, days: 31 }, 8: { adoptions: 304, days: 31 }, 9: { adoptions: 255, days: 30 },
+    10: { adoptions: 250, days: 31 }, 11: { adoptions: 285, days: 30 }, 12: { adoptions: 250, days: 31 }
   };
   
-  const AUG_PRED = 299, SEP_PRED = 291, OCT_PRED = 218, NOV_PRED = 212, DEC_PRED = 286;
   const BAND_HALF_WIDTH = 50;
-  const PRED_BY_MONTH: Record<string, number> = { Aug: AUG_PRED, Sep: SEP_PRED, Oct: OCT_PRED, Nov: NOV_PRED, Dec: DEC_PRED };
-  const peakPredMonth = Object.entries(PRED_BY_MONTH).reduce((a,b)=> a[1] > b[1] ? a : b)[0];
-  const dipPredMonth  = Object.entries(PRED_BY_MONTH).reduce((a,b)=> a[1] < b[1] ? a : b)[0];
   
   const seasonalityData = useMemo(() => {
     const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -393,24 +437,14 @@ const reportDate = useMemo(() => new Date(2025, 11, 31), []);
       const m = h.m;
       const actual = ACTUAL_2025[m]?.adoptions ?? null;
       const bandBottom = Math.max(0, Math.round(h.avg - BAND_HALF_WIDTH));
-      const bandTop    = Math.round(h.avg + BAND_HALF_WIDTH);
-      
-      let actualOrPred: number | null = null;
-      if (m <= 7 && actual !== null) actualOrPred = actual;
-      else if (m === 8) actualOrPred = AUG_PRED;
-      else if (m === 9) actualOrPred = SEP_PRED;
-      else if (m === 10) actualOrPred = OCT_PRED;
-      else if (m === 11) actualOrPred = NOV_PRED;
-      else if (m === 12) actualOrPred = DEC_PRED;
+      const bandTop = Math.round(h.avg + BAND_HALF_WIDTH);
       
       return {
         month: MONTHS[idx],
         historical: Math.round(h.avg),
         actual2025: actual,
-        line2025: actualOrPred,
         bandTop,
         bandBottom,
-        isAug: m === 8
       };
     });
   }, []);
@@ -425,8 +459,34 @@ const reportDate = useMemo(() => new Date(2025, 11, 31), []);
         </p>
       </div>
       
+      {/* Year Tabs */}
+      <div className="mb-8 flex justify-center">
+        <div className="inline-flex rounded-lg border border-gray-200 bg-gray-50 p-1">
+          <button
+            onClick={() => setSelectedYear(2025)}
+            className={`px-6 py-2 rounded-md text-sm font-semibold transition-all ${
+              selectedYear === 2025
+                ? 'bg-blue-600 text-white shadow-md'
+                : 'text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            2025 Dashboard
+          </button>
+          <button
+            onClick={() => setSelectedYear(2026)}
+            className={`px-6 py-2 rounded-md text-sm font-semibold transition-all ${
+              selectedYear === 2026
+                ? 'bg-blue-600 text-white shadow-md'
+                : 'text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            2026 Dashboard
+          </button>
+        </div>
+      </div>
+      
       {/* Key Metrics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6 mb-8">
+      <div className={`grid grid-cols-1 ${selectedYear === 2025 ? 'md:grid-cols-3 lg:grid-cols-5' : keyMetrics.length === 1 ? 'md:grid-cols-1 max-w-md mx-auto' : 'md:grid-cols-2 max-w-2xl mx-auto'} gap-6 mb-8`}>
         {keyMetrics.map((metric, index) => {
           const IconComponent = metric.icon;
           return (
@@ -437,10 +497,10 @@ const reportDate = useMemo(() => new Date(2025, 11, 31), []);
               </div>
               <div className="mb-2">
                 <p className={`text-3xl font-bold ${metric.valueColor}`}>{metric.value}</p>
-                <div className={`text-xs ${metric.textColor} opacity-75`}>{metric.subtitle}</div>
+                <div className={`text-xs ${metric.textColor} opacity-75 mt-1`}>{metric.subtitle}</div>
               </div>
               {metric.comparison && (
-                <div className="flex items-center space-x-1">
+                <div className="flex items-center space-x-1 mt-2">
                   {metric.trend && (
                     <>
                       {metric.trend === 'up'
@@ -471,7 +531,7 @@ const reportDate = useMemo(() => new Date(2025, 11, 31), []);
               {visualizations.map((_, index) => (
                 <div
                   key={index}
-                  className={`h-2 w-2 rounded-full transition-all duration-300 ${index === currentVizIndex ? 'bg-blue-600 w-8' : 'bg-gray-300 hover:bg-gray-400'}`}
+                  className={`h-2 w-2 rounded-full transition-all duration-300 ${index === safeCurrentVizIndex ? 'bg-blue-600 w-8' : 'bg-gray-300 hover:bg-gray-400'}`}
                 />
               ))}
             </div>
@@ -481,10 +541,12 @@ const reportDate = useMemo(() => new Date(2025, 11, 31), []);
           </button>
         </div>
         
-        {/* 1) YTD by Species (dynamic from CSV) */}
+        {/* 1) YTD by Species */}
         {currentViz.id === 'speciesYTD' && (
           <div className="bg-gray-50 p-6 rounded-lg">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">YTD Adoptions by Species (from CSV)</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              {selectedYear === 2025 ? 'YTD Adoptions by Species (2021-2025)' : 'YTD Adoptions by Species (2021-2026)'}
+            </h3>
             <ResponsiveContainer width="100%" height={420}>
               <ComposedChart data={ytdSpeciesForChart}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -501,7 +563,6 @@ const reportDate = useMemo(() => new Date(2025, 11, 31), []);
                 />
                 <Legend />
                 {latestYear && <ReferenceLine x={latestYear} stroke="#e5e7eb" strokeWidth={2} />}
-                {/* Gray line = YTD Total (from CSV) */}
                 <Line
                   type="monotone"
                   dataKey="totalYTD"
@@ -511,27 +572,24 @@ const reportDate = useMemo(() => new Date(2025, 11, 31), []);
                   activeDot={{ r: 6 }}
                   name="Total (YTD)"
                 />
-                {/* Species YTD lines */}
                 <Line type="monotone" dataKey="dogs" stroke="#3b82f6" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} name="Dogs (YTD)" />
                 <Line type="monotone" dataKey="cats" stroke="#10b981" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} name="Cats (YTD)" />
               </ComposedChart>
             </ResponsiveContainer>
             <div className="text-xs text-gray-600 mt-3">
               <span className="font-semibold">Data rule:</span> YTD = adoptions through <strong>{cutoffLabel}</strong> of each year.
-              {csvLoaded && ytdSpeciesForChart.length === 0 && (
-                <span className="ml-2 text-red-600">No rows parsed — check CSV path/headers ("Adoption Date", "Species").</span>
-              )}
             </div>
           </div>
         )}
         
-        {/* 2) Year-over-Year Comparison (NEW!) */}
+        {/* 2) Year-over-Year Comparison */}
         {currentViz.id === 'yearComparison' && (
           <div className="bg-gray-50 p-6 rounded-lg">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">2024 vs 2025 Monthly Adoptions</h3>
+              <h3 className="text-lg font-semibold text-gray-900">
+                {selectedYear === 2025 ? '2024 vs 2025 Monthly Adoptions' : '2025 vs 2026 Monthly Adoptions'}
+              </h3>
               
-              {/* Filter Buttons */}
               <div className="flex gap-2 bg-white p-1 rounded-lg shadow-sm border border-gray-200">
                 <button
                   onClick={() => setComparisonFilter('total')}
@@ -565,9 +623,8 @@ const reportDate = useMemo(() => new Date(2025, 11, 31), []);
                 </button>
               </div>
             </div>
-
             <ResponsiveContainer width="100%" height={450}>
-              <BarChart data={yearOverYearData}>
+              <ComposedChart data={yearOverYearData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="month" />
                 <YAxis label={{ value: 'Number of Adoptions', angle: -90, position: 'insideLeft' }} />
@@ -576,90 +633,86 @@ const reportDate = useMemo(() => new Date(2025, 11, 31), []);
                     const label = 
                       name === 'dogs2024' ? 'Dogs 2024' :
                       name === 'dogs2025' ? 'Dogs 2025' :
+                      name === 'dogs2026' ? 'Dogs 2026' :
                       name === 'cats2024' ? 'Cats 2024' :
                       name === 'cats2025' ? 'Cats 2025' :
+                      name === 'cats2026' ? 'Cats 2026' :
                       name === 'total2024' ? 'Total 2024' :
-                      name === 'total2025' ? 'Total 2025' : name;
+                      name === 'total2025' ? 'Total 2025' :
+                      name === 'total2026' ? 'Total 2026' : name;
                     return [`${value} adoptions`, label];
                   }}
                 />
                 <Legend />
                 
-                {/* Conditionally render bars based on filter */}
-                {comparisonFilter === 'total' && (
+                {selectedYear === 2025 && (
                   <>
-                    <Bar dataKey="total2024" fill="#3b82f6" name="Total 2024" />
-                    <Bar dataKey="total2025" fill="#10b981" name="Total 2025" />
+                    {comparisonFilter === 'total' && (
+                      <>
+                        <Bar dataKey="total2024" fill="#3b82f6" name="Total 2024" />
+                        <Bar dataKey="total2025" fill="#10b981" name="Total 2025" />
+                      </>
+                    )}
+                    {comparisonFilter === 'dogs' && (
+                      <>
+                        <Bar dataKey="dogs2024" fill="#3b82f6" name="Dogs 2024" />
+                        <Bar dataKey="dogs2025" fill="#10b981" name="Dogs 2025" />
+                      </>
+                    )}
+                    {comparisonFilter === 'cats' && (
+                      <>
+                        <Bar dataKey="cats2024" fill="#3b82f6" name="Cats 2024" />
+                        <Bar dataKey="cats2025" fill="#10b981" name="Cats 2025" />
+                      </>
+                    )}
                   </>
                 )}
-                {comparisonFilter === 'dogs' && (
+                
+                {selectedYear === 2026 && (
                   <>
-                    <Bar dataKey="dogs2024" fill="#3b82f6" name="Dogs 2024" />
-                    <Bar dataKey="dogs2025" fill="#10b981" name="Dogs 2025" />
+                    {comparisonFilter === 'total' && (
+                      <>
+                        <Bar dataKey="total2025" fill="#3b82f6" name="Total 2025" />
+                        <Bar dataKey="total2026" fill="#10b981" name="Total 2026" />
+                      </>
+                    )}
+                    {comparisonFilter === 'dogs' && (
+                      <>
+                        <Bar dataKey="dogs2025" fill="#3b82f6" name="Dogs 2025" />
+                        <Bar dataKey="dogs2026" fill="#10b981" name="Dogs 2026" />
+                      </>
+                    )}
+                    {comparisonFilter === 'cats' && (
+                      <>
+                        <Bar dataKey="cats2025" fill="#3b82f6" name="Cats 2025" />
+                        <Bar dataKey="cats2026" fill="#10b981" name="Cats 2026" />
+                      </>
+                    )}
                   </>
                 )}
-                {comparisonFilter === 'cats' && (
-                  <>
-                    <Bar dataKey="cats2024" fill="#3b82f6" name="Cats 2024" />
-                    <Bar dataKey="cats2025" fill="#10b981" name="Cats 2025" />
-                  </>
-                )}
-              </BarChart>
+              </ComposedChart>
             </ResponsiveContainer>
-
-            {/* Insight Cards
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-              <div className="bg-blue-50 p-6 rounded-lg">
-                <h4 className="text-lg font-semibold text-blue-900 mb-3">2025 Wins</h4>
-                <ul className="text-sm text-blue-800 space-y-2">
-                  {yearOverYearData.map((d) => {
-                    const improvement2025 = d.total2025 - d.total2024;
-                    return improvement2025 > 0 ? (
-                      <li key={d.month}>
-                        <strong>{d.month}:</strong> +{improvement2025} adoptions ({d.total2025} vs {d.total2024})
-                      </li>
-                    ) : null;
-                  }).filter(Boolean).slice(0, 5)}
-                </ul>
-              </div>
-              
-              <div className="bg-orange-50 p-6 rounded-lg">
-                <h4 className="text-lg font-semibold text-orange-900 mb-3">2024 Was Stronger</h4>
-                <ul className="text-sm text-orange-800 space-y-2">
-                  {yearOverYearData.map((d) => {
-                    const decline2025 = d.total2024 - d.total2025;
-                    return decline2025 > 0 ? (
-                      <li key={d.month}>
-                        <strong>{d.month}:</strong> -{decline2025} adoptions ({d.total2025} vs {d.total2024})
-                      </li>
-                    ) : null;
-                  }).filter(Boolean).slice(0, 5)}
-                </ul>
-              </div>
-            </div> */}
-
             <div className="text-xs text-gray-600 mt-3">
-              <span className="font-semibold">Data source:</span> Computed from adoptions_by_species.csv. 
-              Blue = 2024, Green = 2025.
+              <span className="font-semibold">Data source:</span> Computed from adoptions_by_species.csv. Blue = previous year, Green = current year.
             </div>
           </div>
         )}
         
-        {/* 3) Seasonality & Predictions */}
-        {currentViz.id === 'predictions' && (
+        {/* 3) Seasonality & Predictions - 2025 ONLY */}
+        {selectedYear === 2025 && currentViz.id === 'predictions' && (
           <div className="bg-gray-50 p-6 rounded-lg">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Historical Seasonality & 2025 Actual/Prediction</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Historical Seasonality & 2025 Actual Data</h3>
             <ResponsiveContainer width="100%" height={460}>
               <ComposedChart data={seasonalityData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="month" />
                 <YAxis />
                 
-                {/* Highlight windows */}
                 <ReferenceArea x1="May" x2="Jun" fill="#10b981" fillOpacity={0.08} stroke="none" />
                 <ReferenceArea x1="Aug" x2="Sep" fill="#10b981" fillOpacity={0.08} stroke="none" />
                 <ReferenceArea x1="Feb" x2="Mar" fill="#ef4444" fillOpacity={0.06} stroke="none" />
                 <ReferenceArea x1="Oct" x2="Nov" fill="#ef4444" fillOpacity={0.06} stroke="none" />
+                
                 <Tooltip
                   content={({ active, payload }) => {
                     if (active && payload && payload[0]) {
@@ -669,18 +722,11 @@ const reportDate = useMemo(() => new Date(2025, 11, 31), []);
                       return (
                         <div className="bg-white p-3 rounded shadow-lg border">
                           <p className="font-semibold">{d.month} 2025</p>
-                          {d.isAug ? (
-                            <>
-                              <p className="text-purple-600">Prediction: {AUG_PRED}</p>
-                              <p className="text-blue-600">Actual: {d.actual2025}</p>
-                            </>
-                          ) : d.actual2025 != null ? (
+                          {d.actual2025 != null ? (
                             <p className="text-blue-600">Actual: {d.actual2025} {d.actual2025 >= d.historical ? '↑ above avg' : '↓ below avg'}</p>
-                          ) : (
-                            <p className="text-purple-600">Prediction: {d.line2025}</p>
-                          )}
-                          <p className="text-gray-600">Historical Avg (band center): {d.historical}</p>
-                          <p className="text-gray-400">Band: {d.bandBottom} – {d.bandTop}</p>
+                          ) : null}
+                          <p className="text-gray-600">Historical Avg: {d.historical}</p>
+                          <p className="text-gray-400">Range: {d.bandBottom} – {d.bandTop}</p>
                           {isPeak && <p className="text-xs text-emerald-700 mt-1">Peak window</p>}
                           {isDip  && <p className="text-xs text-red-700 mt-1">Dip window</p>}
                         </div>
@@ -690,31 +736,24 @@ const reportDate = useMemo(() => new Date(2025, 11, 31), []);
                   }}
                 />
                 <Legend />
-                {/* Band (avg-centered, ±50) */}
+                
                 <Area type="monotone" dataKey="bandTop" stroke="none" fill="#e5e7eb" fillOpacity={0.6} name="Expected Range (Avg ± 50)" />
                 <Area type="monotone" dataKey="bandBottom" stroke="none" fill="#ffffff" fillOpacity={1} />
-                {/* Historical average */}
                 <Line type="monotone" dataKey="historical" stroke="#6b7280" strokeWidth={2} strokeDasharray="5 5" name="Historical Average" />
-                {/* 2025 line (Jan–Jul = actuals; Aug–Dec = predictions) */}
-                <Line type="monotone" dataKey="line2025" stroke="#a855f7" strokeWidth={3} strokeDasharray="3 3" name="2025 Actual/Prediction" connectNulls dot={{ r: 2 }} activeDot={{ r: 6 }} />
-                {/* Peak & dip callout dots */}
-                <ReferenceDot x={peakPredMonth} y={PRED_BY_MONTH[peakPredMonth]} r={5} fill="#a855f7" stroke="#a855f7" />
-                <ReferenceDot x={dipPredMonth}  y={PRED_BY_MONTH[dipPredMonth]}  r={5} fill="#ffffff" stroke="#ef4444" strokeWidth={2} />
-                {/* 2025 actual bars (all blue) */}
                 <Bar dataKey="actual2025" fill="#3b82f6" name="2025 Actual">
                   {seasonalityData.map((_, i) => <Cell key={`cell-${i}`} fill="#3b82f6" />)}
                 </Bar>
               </ComposedChart>
             </ResponsiveContainer>
             <div className="text-xs text-gray-600 mt-3">
-              <span className="font-semibold">Reading the chart:</span> Shaded band = expected range (avg ± ~50). Dashed line = historical average. Purple = 2025 actuals/predictions. Blue = 2025 actuals.
+              <span className="font-semibold">Reading the chart:</span> Shaded band = expected range (avg ± 50). Dashed line = historical average. Blue bars = 2025 actuals.
               <div className="mt-1">Peak windows <span className="text-emerald-700">(light green)</span>: May–Jun, Aug–Sep • Dip windows <span className="text-red-700">(light red)</span>: Feb–Mar, Oct–Nov</div>
             </div>
           </div>
         )}
         
-        {/* 4) Monthly Adoptions Visualization */}
-        {currentViz.id === 'adoptions' && (
+        {/* 4) Monthly Adoptions - 2025 ONLY */}
+        {selectedYear === 2025 && currentViz.id === 'adoptions' && (
           <div>
             <div className="bg-gray-50 p-6 rounded-lg">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Monthly Species Distribution Throughout 2025</h3>
@@ -740,33 +779,11 @@ const reportDate = useMemo(() => new Date(2025, 11, 31), []);
                 </ComposedChart>
               </ResponsiveContainer>
             </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-              {/* <div className="bg-blue-50 p-6 rounded-lg">
-                <h4 className="text-lg font-semibold text-blue-900 mb-3">The Pattern Until June</h4>
-                <ul className="text-sm text-blue-800 space-y-2">
-                  <li><strong>Consistent cat majority:</strong> 51-52% cats across Jan-Jun</li>
-                  <li><strong>Stable dog percentage:</strong> Dogs hovered around 47-48%</li>
-                  <li><strong>Peak performance:</strong> June hit 303 total adoptions</li>
-                  <li><strong>Predictable trend:</strong> 2025 looked like the "Year of the Cat"</li>
-                </ul>
-              </div> */}
-              
-              {/* <div className="bg-red-50 p-6 rounded-lg">
-                <h4 className="text-lg font-semibold text-red-900 mb-3">July's Dramatic Shift</h4>
-                <ul className="text-sm text-red-800 space-y-2">
-                  <li><strong>Dogs surge to 64.9%:</strong> +17 point jump from June's 47.9%</li>
-                  <li><strong>Cats drop to 35.1%:</strong> Lower than the usual 50-52%</li>
-                  <li><strong>168 vs 91:</strong> Nearly 2:1 dog-to-cat ratio</li>
-                  <li><strong>Breaking the pattern:</strong> Highest dog month since early 2024</li>
-                </ul>
-              </div> */}
-            </div>
           </div>
         )}
         
-        {/* 5) Vaccine Clinics Visualization */}
-        {currentViz.id === 'vaccines' && (
+        {/* 5) Vaccine Clinics - 2025 ONLY */}
+        {selectedYear === 2025 && currentViz.id === 'vaccines' && (
           <div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <div className="bg-gray-50 p-6 rounded-lg">
@@ -812,12 +829,12 @@ const reportDate = useMemo(() => new Date(2025, 11, 31), []);
                   </div>
                   
                   <div className="bg-white p-4 rounded border border-gray-300 h-fit">
-                    <h4 className="font-semibold text-gray-900 mb-3">Vaccine Clinic Day Stats</h4>
+                    <h4 className="font-semibold text-gray-900 mb-3">Vaccine Clinic Stats</h4>
                     <div className="space-y-3 text-sm">
                       <div className="flex justify-between"><span className="text-gray-600">Interested:</span><span className="font-medium text-gray-900">297</span></div>
                       <div className="flex justify-between"><span className="text-gray-600">Attended:</span><span className="font-medium text-gray-900">175 (59%)</span></div>
-                      <div className="flex justify-between border-t border-gray-200 pt-2"><span className="text-gray-600">Dogs Served:</span><span className="font-medium text-gray-900">238</span></div>
-                      <div className="flex justify-between"><span className="text-gray-600">Cats Served:</span><span className="font-medium text-gray-900">103</span></div>
+                      <div className="flex justify-between border-t border-gray-200 pt-2"><span className="text-gray-600">Dogs:</span><span className="font-medium text-gray-900">238</span></div>
+                      <div className="flex justify-between"><span className="text-gray-600">Cats:</span><span className="font-medium text-gray-900">103</span></div>
                       <div className="flex justify-between border-t border-gray-200 pt-2"><span className="text-gray-600">Total Animals:</span><span className="font-medium text-gray-900">341</span></div>
                       <div className="flex justify-between"><span className="text-gray-600">Total Services:</span><span className="font-medium text-gray-900">771</span></div>
                     </div>
@@ -826,7 +843,7 @@ const reportDate = useMemo(() => new Date(2025, 11, 31), []);
               </div>
               
               <div className="bg-gray-50 p-6 rounded-lg">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">July 25, 2025 - Record Clinic Breakdown</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">July 25, 2025 - Record Clinic</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <ResponsiveContainer width="100%" height={250}>
@@ -855,8 +872,8 @@ const reportDate = useMemo(() => new Date(2025, 11, 31), []);
                     <div className="space-y-3 text-sm">
                       <div className="flex justify-between"><span className="text-gray-600">Interested:</span><span className="font-medium text-gray-900">323</span></div>
                       <div className="flex justify-between"><span className="text-gray-600">Attended:</span><span className="font-medium text-gray-900">191 (59%)</span></div>
-                      <div className="flex justify-between border-t border-gray-200 pt-2"><span className="text-gray-600">Dogs Served:</span><span className="font-medium text-gray-900">275</span></div>
-                      <div className="flex justify-between"><span className="text-gray-600">Cats Served:</span><span className="font-medium text-gray-900">131</span></div>
+                      <div className="flex justify-between border-t border-gray-200 pt-2"><span className="text-gray-600">Dogs:</span><span className="font-medium text-gray-900">275</span></div>
+                      <div className="flex justify-between"><span className="text-gray-600">Cats:</span><span className="font-medium text-gray-900">131</span></div>
                       <div className="flex justify-between border-t border-gray-200 pt-2"><span className="text-gray-600">Total Animals:</span><span className="font-medium text-gray-900">406</span></div>
                       <div className="flex justify-between"><span className="text-gray-600">Total Services:</span><span className="font-medium text-gray-900">879</span></div>
                     </div>
@@ -866,22 +883,22 @@ const reportDate = useMemo(() => new Date(2025, 11, 31), []);
             
               <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="bg-green-50 p-6 rounded-lg">
-                  <h4 className="text-lg font-semibold text-green-900 mb-3">Growth</h4>
+                  <h4 className="text-lg font-semibold text-green-900 mb-3">2025 Highlights</h4>
                   <ul className="text-sm text-green-800 space-y-2">
-                    <li>• July 25 clinic: 406 animals served in ONE DAY!</li>
-                    <li>• 658 vaccines administered (previous record: 298)</li>
-                    <li>• 221 microchips placed (highest ever)</li>
-                    <li>• 323 people interested (3x normal volume)</li>
+                    <li>• July 25: 406 animals in one day!</li>
+                    <li>• 658 vaccines (record high)</li>
+                    <li>• 221 microchips placed</li>
+                    <li>• 323 people interested</li>
                   </ul>
                 </div>
                 
                 <div className="bg-yellow-50 p-6 rounded-lg">
-                  <h4 className="text-lg font-semibold text-yellow-900 mb-3">Evolution</h4>
+                  <h4 className="text-lg font-semibold text-yellow-900 mb-3">Program Impact</h4>
                   <ul className="text-sm text-yellow-800 space-y-2">
-                    <li>• Total program impact: 1,684 animals served</li>
-                    <li>• 2,534 vaccines administered across all clinics</li>
-                    <li>• Dogs dominate vaccine clinics (67% vs 33% cats)</li>
-                    <li>• Microchip adoption growing rapidly within the community</li>
+                    <li>• 1,684 animals served total</li>
+                    <li>• 2,534 vaccines administered</li>
+                    <li>• 67% dogs, 33% cats</li>
+                    <li>• Growing microchip adoption</li>
                   </ul>
                 </div>
               </div>
