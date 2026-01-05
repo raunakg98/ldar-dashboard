@@ -183,7 +183,7 @@ const DashboardCards = () => {
         const rows = (res.data as SpeciesRow[]).filter(r => r['Adoption Date'] && r.Species);
         setSpeciesRows(rows);
       },
-      error: (error) => {
+      error: (error: Error) => {
       console.error('Error loading CSV:', error);
     },
     });
