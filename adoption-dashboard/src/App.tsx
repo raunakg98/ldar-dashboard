@@ -5,7 +5,7 @@ import { TrendingUp, TrendingDown, Heart, Calendar, MapPin, ChevronLeft, Chevron
 import {
   Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Bar,
   ResponsiveContainer, ComposedChart, PieChart, Pie, Cell, Area,
-  ReferenceArea, ReferenceDot, ReferenceLine
+  ReferenceArea, ReferenceLine
 } from 'recharts';
 
 type SpeciesRow = {
@@ -28,7 +28,12 @@ type MonthlyComparisonPoint = {
   total2026: number;
 };
 
-function formatInt(n: number | undefined) {
+// function formatInt(n: number | undefined) {
+//   if (n == null || Number.isNaN(n)) return '—';
+//   return n.toLocaleString();
+// }
+
+function formatInt(n: number | null | undefined) {
   if (n == null || Number.isNaN(n)) return '—';
   return n.toLocaleString();
 }
@@ -140,10 +145,29 @@ function getMonthData(yearOverYearData: MonthlyComparisonPoint[], monthIndex: nu
   }
 }
 
+function computeMonthlyBreakdown(yearOverYearData: MonthlyComparisonPoint[], year: '2025' | '2026') {
+  return yearOverYearData.map(d => {
+    const dogs = year === '2025' ? d.dogs2025 : d.dogs2026;
+    const cats = year === '2025' ? d.cats2025 : d.cats2026;
+    const total = dogs + cats;
+    const dogPct = total > 0 ? Math.round((dogs / total) * 1000) / 10 : 0;
+    const catPct = total > 0 ? Math.round((cats / total) * 1000) / 10 : 0;
+    
+    return {
+      month: d.month,
+      dogs,
+      cats,
+      total,
+      dogPct,
+      catPct
+    };
+  });
+}
+
 const DashboardCards = () => {
   // ===== State Management =====
   const [speciesRows, setSpeciesRows] = useState<SpeciesRow[]>([]);
-  const [csvLoaded, setCsvLoaded] = useState(false);
+  // const [csvLoaded, setCsvLoaded] = useState(false);
   const [comparisonFilter, setComparisonFilter] = useState<'total' | 'dogs' | 'cats'>('total');
   const [selectedYear, setSelectedYear] = useState<2025 | 2026>(2025);
   const [currentVizIndex, setCurrentVizIndex] = useState(0);
@@ -158,9 +182,10 @@ const DashboardCards = () => {
       complete: (res: ParseResult<SpeciesRow>) => {
         const rows = (res.data as SpeciesRow[]).filter(r => r['Adoption Date'] && r.Species);
         setSpeciesRows(rows);
-        setCsvLoaded(true);
       },
-      error: () => setCsvLoaded(true),
+      error: (error) => {
+      console.error('Error loading CSV:', error);
+    },
     });
   }, []);
   
@@ -228,6 +253,7 @@ const DashboardCards = () => {
   const visualizations2026 = [
     { id: 'speciesYTD', title: 'YTD Adoptions by Species', subtitle: 'Dogs vs Cats (YTD) including 2026 data' },
     { id: 'yearComparison', title: '2025 vs 2026 Monthly Comparison', subtitle: 'Year-over-year adoption trends' },
+    { id: 'adoptions', title: 'Monthly Adoptions Breakdown', subtitle: '2026 Cats vs Dogs Trends' },
   ];
   
   const visualizations = selectedYear === 2025 ? visualizations2025 : visualizations2026;
@@ -389,6 +415,12 @@ const DashboardCards = () => {
     { month: 'Dec', dogs: 140, cats: 110, total: 250, dogPct: 56.0, catPct: 44.0 }
   ];
   
+  // Dynamic 2026 breakdown from CSV
+  const monthly2026CatsVsDogs = useMemo(() => 
+    computeMonthlyBreakdown(yearOverYearData, '2026'), 
+    [yearOverYearData]
+  );
+  
   const allTimeVaccineData = [
     { date: 'Jun 28, 2024', interested: 55,  attended: 25,  totalAnimals: 75,  totalVaccines: 120, showUpRate: 45.5, microchips: 7,   cats: 36, dogs: 39 },
     { date: 'Jul 27, 2024', interested: 117, attended: 59,  totalAnimals: 232, totalVaccines: 220, showUpRate: 50.4, microchips: 0,   cats: 62, dogs: 170 },
@@ -470,7 +502,7 @@ const DashboardCards = () => {
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
-            2025 Dashboard
+             2025 
           </button>
           <button
             onClick={() => setSelectedYear(2026)}
@@ -480,7 +512,7 @@ const DashboardCards = () => {
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
-            2026 Dashboard
+             2026
           </button>
         </div>
       </div>
@@ -752,13 +784,15 @@ const DashboardCards = () => {
           </div>
         )}
         
-        {/* 4) Monthly Adoptions - 2025 ONLY */}
-        {selectedYear === 2025 && currentViz.id === 'adoptions' && (
+        {/* 4) Monthly Adoptions - Both 2025 and 2026 */}
+        {currentViz.id === 'adoptions' && (
           <div>
             <div className="bg-gray-50 p-6 rounded-lg">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Monthly Species Distribution Throughout 2025</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                {selectedYear === 2025 ? 'Monthly Species Distribution Throughout 2025' : 'Monthly Species Distribution Throughout 2026'}
+              </h3>
               <ResponsiveContainer width="100%" height={400}>
-                <ComposedChart data={monthly2025CatsVsDogs}>
+                <ComposedChart data={selectedYear === 2025 ? monthly2025CatsVsDogs : monthly2026CatsVsDogs}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month" />
                   <YAxis yAxisId="left" label={{ value: 'Number of Adoptions', angle: -90, position: 'insideLeft' }} />
@@ -769,7 +803,7 @@ const DashboardCards = () => {
                       if (name === 'dogPct' || name === 'catPct') return [`${value}%`, name === 'dogPct' ? 'Dog %' : 'Cat %'];
                       return [value, name];
                     }}
-                    labelFormatter={(label) => `${label} 2025`}
+                    labelFormatter={(label) => `${label} ${selectedYear}`}
                   />
                   <Legend />
                   <Bar yAxisId="left" dataKey="dogs" fill="#3b82f6" name="Dogs" />
