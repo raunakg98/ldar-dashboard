@@ -394,7 +394,72 @@ const DashboardCards = () => {
       textColor: "text-green-900",
       valueColor: "text-green-600",
       trendColor: currentMonthPct != null ? (currentMonthPct >= 0 ? "text-green-600" : "text-red-600") : "text-green-600"
-    }] : [])
+    }] : []),
+    {
+      title: "Animals in Foster Care",
+      value: "126",
+      subtitle: (
+        <div className="text-xs space-y-1">
+          <div>15 dogs in boarding</div>
+          <div>9 cats at PetSmart</div>
+          <div>21 cats at Meow Maison</div>
+        </div>
+      ),
+      trend: "up",
+      icon: TrendingUp,
+      bgColor: "bg-purple-50",
+      textColor: "text-purple-900",
+      valueColor: "text-purple-600",
+      trendColor: "text-green-600"
+    },
+    {
+      title: "Animals in Care VA",
+      value: "171",
+      subtitle: (
+        <div className="flex gap-4 mt-1">
+          <div className="flex items-center gap-1.5">
+            <div className="w-2 h-2 rounded-full bg-orange-400"></div>
+            <span className="text-xs font-medium">76 dogs</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <div className="w-2 h-2 rounded-full bg-orange-300"></div>
+            <span className="text-xs font-medium">91 cats</span>
+          </div>
+        </div>
+      ),
+      comparison: "-27%",
+      comparisonText: "vs last week (173)",
+      trend: "down",
+      icon: MapPin,
+      bgColor: "bg-orange-50",
+      textColor: "text-orange-900",
+      valueColor: "text-orange-600",
+      trendColor: "text-red-600"
+    },
+    {
+      title: "Animals in Care SC",
+      value: "108",
+      subtitle: (
+        <div className="flex gap-4 mt-1">
+          <div className="flex items-center gap-1.5">
+            <div className="w-2 h-2 rounded-full bg-pink-400"></div>
+            <span className="text-xs font-medium">87 dogs</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <div className="w-2 h-2 rounded-full bg-pink-300"></div>
+            <span className="text-xs font-medium">21 cats</span>
+          </div>
+        </div>
+      ),
+      comparison: "+11%",
+      comparisonText: "vs last week (97)",
+      trend: "up",
+      icon: MapPin,
+      bgColor: "bg-pink-50",
+      textColor: "text-pink-900",
+      valueColor: "text-pink-600",
+      trendColor: "text-green-600"
+    }
   ];
   
   const keyMetrics = selectedYear === 2025 ? keyMetrics2025 : keyMetrics2026;
@@ -518,7 +583,7 @@ const DashboardCards = () => {
       </div>
       
       {/* Key Metrics Cards */}
-      <div className={`grid grid-cols-1 ${selectedYear === 2025 ? 'md:grid-cols-3 lg:grid-cols-5' : keyMetrics.length === 1 ? 'md:grid-cols-1 max-w-md mx-auto' : 'md:grid-cols-2 max-w-2xl mx-auto'} gap-6 mb-8`}>
+      <div className={`grid grid-cols-1 md:grid-cols-3 lg:grid-cols-${keyMetrics.length} gap-6 mb-8`}>
         {keyMetrics.map((metric, index) => {
           const IconComponent = metric.icon;
           return (
