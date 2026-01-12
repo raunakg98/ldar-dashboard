@@ -397,12 +397,12 @@ const DashboardCards = () => {
     }] : []),
     {
       title: "Animals in Foster Care",
-      value: "110",
+      value: "112",
       subtitle: (
         <div className="text-xs space-y-1">
-          <div>13 dogs in boarding</div>
-          <div>7 cats at PetSmart</div>
-          <div>18 cats at Meow Maison</div>
+          <div>7 dogs in boarding</div>
+          <div>5 cats at PetSmart</div>
+          <div>15 cats at Meow Maison</div>
         </div>
       ),
       trend: "up",
@@ -414,21 +414,21 @@ const DashboardCards = () => {
     },
     {
       title: "Animals in Care VA",
-      value: "150",
+      value: "145",
       subtitle: (
         <div className="flex gap-4 mt-1">
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-orange-400"></div>
-            <span className="text-xs font-medium">90 dogs</span>
+            <span className="text-xs font-medium">84 dogs</span>
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-orange-300"></div>
-            <span className="text-xs font-medium">60 cats</span>
+            <span className="text-xs font-medium">61 cats</span>
           </div>
         </div>
       ),
-      comparison: "-12%",
-      comparisonText: "vs last week (171)",
+      comparison: "-3%",
+      comparisonText: "vs last week (150)",
       trend: "down",
       icon: MapPin,
       bgColor: "bg-orange-50",
@@ -438,21 +438,21 @@ const DashboardCards = () => {
     },
     {
       title: "Animals in Care SC",
-      value: "66",
+      value: "94",
       subtitle: (
         <div className="flex gap-4 mt-1">
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-pink-400"></div>
-            <span className="text-xs font-medium">66 dogs</span>
+            <span className="text-xs font-medium">82 dogs</span>
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-pink-300"></div>
-            <span className="text-xs font-medium">14 cats</span>
+            <span className="text-xs font-medium">12 cats</span>
           </div>
         </div>
       ),
-      comparison: "-38%",
-      comparisonText: "vs last week (108)",
+      comparison: "42%",
+      comparisonText: "vs last week (66)",
       trend: "up",
       icon: MapPin,
       bgColor: "bg-pink-50",
