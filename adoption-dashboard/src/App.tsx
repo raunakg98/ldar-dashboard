@@ -169,7 +169,7 @@ const DashboardCards = () => {
   const [speciesRows, setSpeciesRows] = useState<SpeciesRow[]>([]);
   // const [csvLoaded, setCsvLoaded] = useState(false);
   const [comparisonFilter, setComparisonFilter] = useState<'total' | 'dogs' | 'cats'>('total');
-  const [selectedYear, setSelectedYear] = useState<2025 | 2026>(2025);
+  const [selectedYear, setSelectedYear] = useState<2025 | 2026>(2026);
   const [currentVizIndex, setCurrentVizIndex] = useState(0);
   
   // ===== Load CSV =====
@@ -400,9 +400,9 @@ const DashboardCards = () => {
       value: "112",
       subtitle: (
         <div className="text-xs space-y-1">
-          <div>7 dogs in boarding</div>
-          <div>5 cats at PetSmart</div>
-          <div>15 cats at Meow Maison</div>
+          <div>5 dogs in boarding</div>
+          <div>2 cats at PetSmart</div>
+          <div>14 cats at Meow Maison</div>
         </div>
       ),
       trend: "up",
@@ -414,21 +414,21 @@ const DashboardCards = () => {
     },
     {
       title: "Animals in Care VA",
-      value: "145",
+      value: "134",
       subtitle: (
         <div className="flex gap-4 mt-1">
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-orange-400"></div>
-            <span className="text-xs font-medium">84 dogs</span>
+            <span className="text-xs font-medium">76 dogs</span>
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-orange-300"></div>
-            <span className="text-xs font-medium">61 cats</span>
+            <span className="text-xs font-medium">56 cats</span>
           </div>
         </div>
       ),
-      comparison: "-3%",
-      comparisonText: "vs last week (150)",
+      comparison: "-7%",
+      comparisonText: "vs last week (145)",
       trend: "down",
       icon: MapPin,
       bgColor: "bg-orange-50",
@@ -438,21 +438,21 @@ const DashboardCards = () => {
     },
     {
       title: "Animals in Care SC",
-      value: "94",
+      value: "152",
       subtitle: (
         <div className="flex gap-4 mt-1">
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-pink-400"></div>
-            <span className="text-xs font-medium">82 dogs</span>
+            <span className="text-xs font-medium">113 dogs</span>
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-pink-300"></div>
-            <span className="text-xs font-medium">12 cats</span>
+            <span className="text-xs font-medium">39 cats</span>
           </div>
         </div>
       ),
-      comparison: "42%",
-      comparisonText: "vs last week (66)",
+      comparison: "61%",
+      comparisonText: "vs last week (94)",
       trend: "up",
       icon: MapPin,
       bgColor: "bg-pink-50",
@@ -560,16 +560,6 @@ const DashboardCards = () => {
       <div className="mb-8 flex justify-center">
         <div className="inline-flex rounded-lg border border-gray-200 bg-gray-50 p-1">
           <button
-            onClick={() => setSelectedYear(2025)}
-            className={`px-6 py-2 rounded-md text-sm font-semibold transition-all ${
-              selectedYear === 2025
-                ? 'bg-blue-600 text-white shadow-md'
-                : 'text-gray-600 hover:text-gray-900'
-            }`}
-          >
-             2025 
-          </button>
-          <button
             onClick={() => setSelectedYear(2026)}
             className={`px-6 py-2 rounded-md text-sm font-semibold transition-all ${
               selectedYear === 2026
@@ -578,6 +568,16 @@ const DashboardCards = () => {
             }`}
           >
              2026
+          </button>
+          <button
+            onClick={() => setSelectedYear(2025)}
+            className={`px-6 py-2 rounded-md text-sm font-semibold transition-all ${
+              selectedYear === 2025
+                ? 'bg-blue-600 text-white shadow-md'
+                : 'text-gray-600 hover:text-gray-900'
+            }`}
+          >
+             2025 
           </button>
         </div>
       </div>
