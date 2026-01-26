@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
-import Papa from 'papaparse';
-import type { ParseResult } from 'papaparse';
+// import Papa from 'papaparse';
+// import type { ParseResult } from 'papaparse';
 import { TrendingUp, TrendingDown, Heart, Calendar, MapPin, ChevronLeft, ChevronRight } from 'lucide-react';
 import {
   Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Bar,
@@ -173,21 +173,51 @@ const DashboardCards = () => {
   const [currentVizIndex, setCurrentVizIndex] = useState(0);
   
   // ===== Load CSV =====
-  useEffect(() => {
-    Papa.parse('/data/adoptions_by_species.csv', {
-      download: true,
-      header: true,
-      dynamicTyping: false,
-      skipEmptyLines: true,
-      complete: (res: ParseResult<SpeciesRow>) => {
-        const rows = (res.data as SpeciesRow[]).filter(r => r['Adoption Date'] && r.Species);
+useEffect(() => {
+  const fetchData = () => {
+    fetch('/api/sheets')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(result => {
+        const rows = (result.data as SpeciesRow[]).filter(
+          r => r['Adoption Date'] && r.Species
+        );
         setSpeciesRows(rows);
-      },
-      error: (error: Error) => {
-      console.error('Error loading CSV:', error);
-    },
-    });
-  }, []);
+      })
+      .catch(error => {
+        console.error('Error loading Google Sheets data:', error);
+        // Fallback to CSV if API fails
+        Papa.parse('/data/adoptions_by_species.csv', {
+          download: true,
+          header: true,
+          dynamicTyping: false,
+          skipEmptyLines: true,
+          complete: (res: ParseResult<SpeciesRow>) => {
+            const rows = (res.data as SpeciesRow[]).filter(
+              r => r['Adoption Date'] && r.Species
+            );
+            setSpeciesRows(rows);
+          },
+          error: (error: Error) => {
+            console.error('Error loading CSV fallback:', error);
+          },
+        });
+      });
+  };
+
+  // Fetch immediately on mount
+  fetchData();
+
+  // Set up auto-refresh every 5 minutes (300000 ms)
+  const intervalId = setInterval(fetchData, 300000);
+
+  // Cleanup interval on unmount
+  return () => clearInterval(intervalId);
+}, []);
   
   // ===== Dynamic Report Date Based on Selected Year =====
   const reportDate = useMemo(() => {
