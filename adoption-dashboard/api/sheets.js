@@ -32,7 +32,7 @@ module.exports = async (req, res) => {
     // Fetch data from the sheet
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId,
-      range: 'Sheet1!A:C', // Adjust to your sheet name and columns
+      range: 'Dashboard!A:C', // Adjust to your sheet name and columns
     });
 
     const rows = response.data.values;
