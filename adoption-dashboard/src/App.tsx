@@ -320,7 +320,7 @@ useEffect(() => {
     {
       title: `${currentMonthFullName} 2025`,
       value: formatInt(currentMonthCurrent),
-      subtitle: `actual adoptions`,
+      subtitle: `adoptions this month`,
       comparison: currentMonthPct != null ? `${currentMonthPct > 0 ? '+' : ''}${currentMonthPct}%` : undefined,
       comparisonText: currentMonthPrev ? `vs ${currentMonthName} 2024 (${formatInt(currentMonthPrev)})` : undefined,
       trend: currentMonthPct != null ? (currentMonthPct >= 0 ? 'up' : 'down') : 'up',
@@ -427,12 +427,12 @@ useEffect(() => {
     }] : []),
     {
       title: "Animals in Foster Care",
-      value: "163",
+      value: "148",
       subtitle: (
         <div className="text-xs space-y-1">
-          <div>9 dogs in boarding</div>
-          <div>4 cats at PetSmart</div>
-          <div>20 cats at Meow Maison</div>
+          <div>20 dogs in boarding</div>
+          <div>0 cats at PetSmart</div>
+          <div>13 cats at Meow Maison</div>
         </div>
       ),
       trend: "up",
@@ -444,21 +444,21 @@ useEffect(() => {
     },
     {
       title: "Animals in Care VA",
-      value: "191",
+      value: "182",
       subtitle: (
         <div className="flex gap-4 mt-1">
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-orange-400"></div>
-            <span className="text-xs font-medium">123 dogs</span>
+            <span className="text-xs font-medium">121 dogs</span>
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-orange-300"></div>
-            <span className="text-xs font-medium">68 cats</span>
+            <span className="text-xs font-medium">61 cats</span>
           </div>
         </div>
       ),
-      comparison: "-10%",
-      comparisonText: "vs last week (214)",
+      comparison: "-4%",
+      comparisonText: "vs last week (191)",
       trend: "down",
       icon: MapPin,
       bgColor: "bg-orange-50",
@@ -468,21 +468,21 @@ useEffect(() => {
     },
     {
       title: "Animals in Care SC",
-      value: "118",
+      value: "77",
       subtitle: (
         <div className="flex gap-4 mt-1">
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-pink-400"></div>
-            <span className="text-xs font-medium">90 dogs</span>
+            <span className="text-xs font-medium">64 dogs</span>
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-pink-300"></div>
-            <span className="text-xs font-medium">28 cats</span>
+            <span className="text-xs font-medium">13 cats</span>
           </div>
         </div>
       ),
-      comparison: "24%",
-      comparisonText: "vs last week (95)",
+      comparison: "-34%",
+      comparisonText: "vs last week (118)",
       trend: "up",
       icon: MapPin,
       bgColor: "bg-pink-50",
