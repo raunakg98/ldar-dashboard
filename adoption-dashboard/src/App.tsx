@@ -432,7 +432,7 @@ useEffect(() => {
         <div className="text-xs space-y-1">
           <div>13 dogs in boarding</div>
           <div>2 cats at PetSmart</div>
-          <div>17 cats at Meow Maison</div>
+          <div>18 cats at Meow Maison</div>
         </div>
       ),
       trend: "up",
