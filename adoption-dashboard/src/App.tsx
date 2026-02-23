@@ -444,21 +444,21 @@ useEffect(() => {
     },
     {
       title: "Animals in Care VA",
-      value: "146",
+      value: "168",
       subtitle: (
         <div className="flex gap-4 mt-1">
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-orange-400"></div>
-            <span className="text-xs font-medium">89 dogs</span>
+            <span className="text-xs font-medium">110 dogs</span>
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-orange-300"></div>
-            <span className="text-xs font-medium">57 cats</span>
+            <span className="text-xs font-medium">58 cats</span>
           </div>
         </div>
       ),
       comparison: "-20%",
-      comparisonText: "vs last week (182)",
+      comparisonText: "vs last week (146)",
       trend: "down",
       icon: MapPin,
       bgColor: "bg-orange-50",
@@ -468,21 +468,21 @@ useEffect(() => {
     },
     {
       title: "Animals in Care SC",
-      value: "96",
+      value: "72",
       subtitle: (
         <div className="flex gap-4 mt-1">
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-pink-400"></div>
-            <span className="text-xs font-medium">80 dogs</span>
+            <span className="text-xs font-medium">61 dogs</span>
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-pink-300"></div>
-            <span className="text-xs font-medium">16 cats</span>
+            <span className="text-xs font-medium">11 cats</span>
           </div>
         </div>
       ),
-      comparison: "24%",
-      comparisonText: "vs last week (77)",
+      comparison: "-25%",
+      comparisonText: "vs last week (96)",
       trend: "up",
       icon: MapPin,
       bgColor: "bg-pink-50",
