@@ -1070,7 +1070,7 @@ useEffect(() => {
 
       {/* 2025 reference pies — side by side, no stats tables */}
 <div className="bg-gray-50 p-6 rounded-lg">
-  <h3 className="text-lg font-semibold text-gray-900 mb-1">2025 Clinics (Reference)</h3>
+  <h3 className="text-lg font-semibold text-gray-900 mb-1">2025s Clinics (Reference)</h3>
   <p className="text-xs text-gray-500 mb-4">July 25 &amp; October 3, 2025</p>
   <div style={{ display: 'flex', width: '100%' }}>
     <div style={{ flex: 1, minWidth: 0 }}>
