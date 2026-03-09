@@ -284,6 +284,7 @@ useEffect(() => {
     { id: 'speciesYTD', title: 'YTD Adoptions by Species', subtitle: 'Dogs vs Cats (YTD) including 2026 data' },
     { id: 'yearComparison', title: '2025 vs 2026 Monthly Comparison', subtitle: 'Year-over-year adoption trends' },
     { id: 'adoptions', title: 'Monthly Adoptions Breakdown', subtitle: '2026 Cats vs Dogs Trends' },
+    { id: 'vaccines', title: 'Vaccine Clinics Performance', subtitle: '2026 Clinics + 2025 Reference' }
   ];
   
   const visualizations = selectedYear === 2025 ? visualizations2025 : visualizations2026;
@@ -524,7 +525,8 @@ useEffect(() => {
     { date: 'Feb 22, 2025', interested: 163, attended: 24,  totalAnimals: 207, totalVaccines: 298, showUpRate: 14.7, microchips: 125, cats: 64, dogs: 143 },
     { date: 'May 8, 2025',  interested: 91,  attended: 53,  totalAnimals: 114, totalVaccines: 137, showUpRate: 58.2, microchips: 70,  cats: 30, dogs: 84 },
     { date: 'Jul 25, 2025', interested: 323, attended: 191, totalAnimals: 406, totalVaccines: 658, showUpRate: 59.1, microchips: 221, cats: 131, dogs: 275 },
-    { date: 'Oct 3, 2025',  interested: 297, attended: 175, totalAnimals: 341, totalVaccines: 563, showUpRate: 58.9, microchips: 208, cats: 103, dogs: 238 }
+    { date: 'Oct 3, 2025',  interested: 297, attended: 175, totalAnimals: 341, totalVaccines: 563, showUpRate: 58.9, microchips: 208, cats: 103, dogs: 238 },
+    { date: 'Feb 27, 2026', interested: 175, attended: 89, totalAnimals: 204, totalVaccines: 483, showUpRate: 50.9, microchips: 96, cats: 54, dogs: 150 },
   ];
   
   const july2025Services = [
@@ -543,6 +545,15 @@ useEffect(() => {
     { name: 'Rabies Cat',   value: 91,  color: '#f59e0b' }
   ];
   
+  const feb2026Services = [
+    { name: 'DHP Vaccines',   value: 146, color: '#10b981' },
+    { name: 'Rabies Dog',     value: 141, color: '#ef4444' },
+    { name: 'Microchips',     value: 96,  color: '#8b5cf6' },
+    { name: 'FVRCP',          value: 55,  color: '#3b82f6' },
+    { name: 'Rabies Cat',     value: 45,  color: '#f59e0b' },
+    { name: 'Microchips Cat', value: 27,  color: '#a78bfa' },
+  ];
+
   const HIST = [
     { m: 1,  avg: 216.0 },   { m: 2,  avg: 172.75 },  { m: 3,  avg: 199.125 }, { m: 4,  avg: 197.125 },
     { m: 5,  avg: 213.875 }, { m: 6,  avg: 213.625 }, { m: 7,  avg: 190.625 }, { m: 8,  avg: 215.75 },
@@ -1034,6 +1045,103 @@ useEffect(() => {
             </div>
           </div>
         )}
+        {/* Vaccine Clinics - 2026 */}
+{selectedYear === 2026 && currentViz.id === 'vaccines' && (
+  <div>
+    <div className="grid grid-cols-1 gap-6">
+
+      {/* Historical bar chart - now includes Feb 2026 */}
+      <div className="bg-gray-50 p-6 rounded-lg">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">All-Time Clinic Growth (through Feb 2026)</h3>
+        <ResponsiveContainer width="100%" height={350}>
+          <ComposedChart data={allTimeVaccineData}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="date" angle={-45} textAnchor="end" height={80} />
+            <YAxis yAxisId="left" />
+            <YAxis yAxisId="right" orientation="right" />
+            <Tooltip />
+            <Legend />
+            <Bar yAxisId="left" dataKey="attended" fill="#3b82f6" name="People Attended" />
+            <Bar yAxisId="left" dataKey="totalAnimals" fill="#10b981" name="Animals Served" />
+            <Line yAxisId="right" type="monotone" dataKey="totalVaccines" stroke="#ef4444" strokeWidth={3} name="Total Vaccines" />
+          </ComposedChart>
+        </ResponsiveContainer>
+      </div>
+
+      {/* 2025 reference pies — side by side, no stats tables */}
+<div className="bg-gray-50 p-6 rounded-lg">
+  <h3 className="text-lg font-semibold text-gray-900 mb-1">2025 Clinics (Reference)</h3>
+  <p className="text-xs text-gray-500 mb-4">July 25 &amp; October 3, 2025</p>
+  <div style={{ display: 'flex', width: '100%' }}>
+    <div style={{ flex: 1, minWidth: 0 }}>
+      <p className="text-sm font-medium text-center text-gray-700 mb-2">July 25, 2025 (Record Clinic)</p>
+      <ResponsiveContainer width="100%" height={280}>
+        <PieChart>
+          <Pie data={july2025Services} cx="50%" cy="50%" labelLine={false}
+            label={({ name, value }) => `${name.split(' ')[0]}: ${value}`}
+            outerRadius={90} dataKey="value">
+            {july2025Services.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={entry.color} />
+            ))}
+          </Pie>
+          <Tooltip />
+        </PieChart>
+      </ResponsiveContainer>
+    </div>
+    <div style={{ flex: 1, minWidth: 0 }}>
+      <p className="text-sm font-medium text-center text-gray-700 mb-2">October 3, 2025</p>
+      <ResponsiveContainer width="100%" height={280}>
+        <PieChart>
+          <Pie data={oct2025Services} cx="50%" cy="50%" labelLine={false}
+            label={({ name, value }) => `${name.split(' ')[0]}: ${value}`}
+            outerRadius={90} dataKey="value">
+            {oct2025Services.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={entry.color} />
+            ))}
+          </Pie>
+          <Tooltip />
+        </PieChart>
+      </ResponsiveContainer>
+    </div>
+  </div>
+</div>
+
+      {/* Feb 27, 2026 — pie + stats */}
+      <div className="bg-gray-50 p-6 rounded-lg">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">February 27, 2026 Vaccine Clinic Breakdown</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <ResponsiveContainer width="100%" height={250}>
+              <PieChart>
+                <Pie data={feb2026Services} cx="50%" cy="50%" labelLine={false}
+                  label={({ name, value }) => `${name.split(' ')[0]}: ${value}`}
+                  outerRadius={80} fill="#8884d8" dataKey="value">
+                  {feb2026Services.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="bg-white p-4 rounded border border-gray-300 h-fit">
+            <h4 className="font-semibold text-gray-900 mb-3">Clinic Stats</h4>
+            <div className="space-y-3 text-sm">
+              <div className="flex justify-between"><span className="text-gray-600">Interested:</span><span className="font-medium text-gray-900">175</span></div>
+              <div className="flex justify-between"><span className="text-gray-600">Attended:</span><span className="font-medium text-gray-900">89 (51%)</span></div>
+              <div className="flex justify-between border-t border-gray-200 pt-2"><span className="text-gray-600">Dogs Served:</span><span className="font-medium text-gray-900">150</span></div>
+              <div className="flex justify-between"><span className="text-gray-600">Cats Served:</span><span className="font-medium text-gray-900">54</span></div>
+              <div className="flex justify-between border-t border-gray-200 pt-2"><span className="text-gray-600">Total Animals:</span><span className="font-medium text-gray-900">204</span></div>
+              <div className="flex justify-between"><span className="text-gray-600">Total Vaccines/Services:</span><span className="font-medium text-gray-900">483</span></div>
+              <div className="flex justify-between"><span className="text-gray-600">Microchips (Dog/Cat):</span><span className="font-medium text-gray-900">69 / 27</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+)}
       </div>
     </div>
   );
