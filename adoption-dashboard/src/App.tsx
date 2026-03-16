@@ -432,7 +432,7 @@ useEffect(() => {
       subtitle: (
         <div className="text-xs space-y-1">
           <div>18 dogs in boarding</div>
-          <div>9 cats at PetSmart</div>
+          <div>2 cats at PetSmart</div>
           <div>16 cats at Meow Maison</div>
         </div>
       ),
