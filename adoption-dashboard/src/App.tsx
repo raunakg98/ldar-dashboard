@@ -428,12 +428,12 @@ useEffect(() => {
     }] : []),
     {
       title: "Animals in Foster Care",
-      value: "132",
+      value: "139",
       subtitle: (
         <div className="text-xs space-y-1">
           <div>18 dogs in boarding</div>
           <div>9 cats at PetSmart</div>
-          <div>21 cats at Meow Maison</div>
+          <div>16 cats at Meow Maison</div>
         </div>
       ),
       trend: "up",
@@ -445,21 +445,21 @@ useEffect(() => {
     },
     {
       title: "Animals in Care VA",
-      value: "174",
+      value: "170",
       subtitle: (
         <div className="flex gap-4 mt-1">
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-orange-400"></div>
-            <span className="text-xs font-medium">109 dogs</span>
+            <span className="text-xs font-medium">113 dogs</span>
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-orange-300"></div>
-            <span className="text-xs font-medium">65 cats</span>
+            <span className="text-xs font-medium">57 cats</span>
           </div>
         </div>
       ),
-      comparison: "17%",
-      comparisonText: "vs last week (148)",
+      comparison: "-2%",
+      comparisonText: "vs last week (174)",
       trend: "down",
       icon: MapPin,
       bgColor: "bg-orange-50",
@@ -469,21 +469,21 @@ useEffect(() => {
     },
     {
       title: "Animals in Care SC",
-      value: "79",
+      value: "125",
       subtitle: (
         <div className="flex gap-4 mt-1">
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-pink-400"></div>
-            <span className="text-xs font-medium">67 dogs</span>
+            <span className="text-xs font-medium">101 dogs</span>
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-pink-300"></div>
-            <span className="text-xs font-medium">12 cats</span>
+            <span className="text-xs font-medium">24 cats</span>
           </div>
         </div>
       ),
       comparison: "-33%",
-      comparisonText: "vs last week (118)",
+      comparisonText: "vs last week (79)",
       trend: "up",
       icon: MapPin,
       bgColor: "bg-pink-50",
