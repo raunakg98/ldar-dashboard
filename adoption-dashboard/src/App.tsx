@@ -336,9 +336,9 @@ useEffect(() => {
       value: "126",
       subtitle: (
         <div className="text-xs space-y-1">
-          <div>15 dogs in boarding</div>
+          <div>33 dogs in boarding</div>
           <div>9 cats at PetSmart</div>
-          <div>21 cats at Meow Maison</div>
+          <div>16 cats at Meow Maison</div>
         </div>
       ),
       trend: "up",
