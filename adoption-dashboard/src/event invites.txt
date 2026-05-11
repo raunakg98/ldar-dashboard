@@ -1,0 +1,41 @@
+<div style="font-family: sans-serif; text-align: center;">
+  <p style="font-size: 18px; font-weight: bold; margin: 0 0 12px;">
+    Add the $100k Match to Your Calendar
+  </p>
+
+  <!-- Row 1: Google, Outlook -->
+  <table align="center" cellspacing="10" cellpadding="0" role="presentation" style="margin: 0 auto 6px;">
+    <tr>
+      <td align="center" style="padding:0;">
+        <a href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Give%20Greater%20DC%20-%20Lucky%20Dog%20Animal%20Rescue&dates=20260512/20260513&details=%3Cp%3EThanks%20to%20the%20incredible%20generosity%20of%20the%20RLH%20Foundation%2C%20every%20gift%20to%20Lucky%20Dog%20Animal%20Rescue%20will%20be%20matched%2C%20dollar%20for%20dollar%2C%20up%20to%20%2410%2C000.%20That%20means%3A%3Cbr%3E%3Cbr%3E-%202x%20the%20free%20vaccines%20%26amp%3B%20low%20cost%20spay%2Fneuter%20surgeries%20provided%20community%20pets%20in%20need%3Cbr%3E%3Cbr%3E-%202x%20the%20at-risk%20dogs%20and%20cats%20saved%20from%20overcrowded%20shelters%3Cbr%3E%3Cbr%3E-%202x%20the%20lifesaving%20medical%20care%20for%20animals%20who%20have%20nowhere%20else%20to%20turn%3Cbr%3E%3Cbr%3E-%202x%20the%20chances%20for%20them%20to%20find%20the%20loving%2C%20forever%20homes%20they%20deserve%3Cbr%3E%3Cbr%3EBehind%20every%20Lucky%20Dog%20and%20Lucky%20Cat%20is%20someone%20like%20you%2C%20someone%20who%20believed%20their%20life%20mattered.%3Cbr%3E%3Cbr%3E%F0%9F%92%9B%20Please%20save%20the%20date%3A%20May%2012%2C%202026.%3C%2Fp%3E&location=https%3A%2F%2Fwww.givegreaterdc.org%2Fo%2Fluckydoganimalrescue"
+           style="background-color:#E3F2FD;color:#1A73E8;padding:12px 22px;text-decoration:none;border-radius:6px;font-weight:bold;display:inline-block;">
+          Google Calendar
+        </a>
+      </td>
+      <td align="center" style="padding:0;">
+        <a href="https://outlook.live.com/owa/?path=/calendar/action/compose&rru=addevent&subject=Give%20Greater%20DC%20-%20Lucky%20Dog%20Animal%20Rescue&startdt=2026-05-12&enddt=2026-05-13&body=%3Cp%3EThanks%20to%20the%20incredible%20generosity%20of%20the%20RLH%20Foundation%2C%20every%20gift%20to%20Lucky%20Dog%20Animal%20Rescue%20will%20be%20matched%2C%20dollar%20for%20dollar%2C%20up%20to%20%2410%2C000.%20That%20means%3A%3Cbr%3E%3Cbr%3E-%202x%20the%20free%20vaccines%20%26amp%3B%20low%20cost%20spay%2Fneuter%20surgeries%20provided%20community%20pets%20in%20need%3Cbr%3E%3Cbr%3E-%202x%20the%20at-risk%20dogs%20and%20cats%20saved%20from%20overcrowded%20shelters%3Cbr%3E%3Cbr%3E-%202x%20the%20lifesaving%20medical%20care%20for%20animals%20who%20have%20nowhere%20else%20to%20turn%3Cbr%3E%3Cbr%3E-%202x%20the%20chances%20for%20them%20to%20find%20the%20loving%2C%20forever%20homes%20they%20deserve%3Cbr%3E%3Cbr%3EBehind%20every%20Lucky%20Dog%20and%20Lucky%20Cat%20is%20someone%20like%20you%2C%20someone%20who%20believed%20their%20life%20mattered.%3Cbr%3E%3Cbr%3E%F0%9F%92%9B%20Please%20save%20the%20date%3A%20May%2012%2C%202026.%3C%2Fp%3E&location=https%3A%2F%2Fwww.givegreaterdc.org%2Fo%2Fluckydoganimalrescue"
+           style="background-color:#E6F0FA;color:#0A66C2;padding:12px 22px;text-decoration:none;border-radius:6px;font-weight:bold;display:inline-block;">
+          Outlook Calendar
+        </a>
+      </td>
+    </tr>
+  </table>
+
+  <!-- Row 2: Yahoo, AOL -->
+  <table align="center" cellspacing="10" cellpadding="0" role="presentation" style="margin: 0 auto;">
+    <tr>
+      <td align="center" style="padding:0;">
+        <a href="https://calendar.yahoo.com/?v=60&view=d&type=20&title=Give%20Greater%20DC%20-%20Lucky%20Dog%20Animal%20Rescue&st=20260512&et=20260513&desc=%3Cp%3EThanks%20to%20the%20incredible%20generosity%20of%20the%20RLH%20Foundation%2C%20every%20gift%20to%20Lucky%20Dog%20Animal%20Rescue%20will%20be%20matched%2C%20dollar%20for%20dollar%2C%20up%20to%20%2410%2C000.%20That%20means%3A%3Cbr%3E%3Cbr%3E-%202x%20the%20free%20vaccines%20%26amp%3B%20low%20cost%20spay%2Fneuter%20surgeries%20provided%20community%20pets%20in%20need%3Cbr%3E%3Cbr%3E-%202x%20the%20at-risk%20dogs%20and%20cats%20saved%20from%20overcrowded%20shelters%3Cbr%3E%3Cbr%3E-%202x%20the%20lifesaving%20medical%20care%20for%20animals%20who%20have%20nowhere%20else%20to%20turn%3Cbr%3E%3Cbr%3E-%202x%20the%20chances%20for%20them%20to%20find%20the%20loving%2C%20forever%20homes%20they%20deserve%3Cbr%3E%3Cbr%3EBehind%20every%20Lucky%20Dog%20and%20Lucky%20Cat%20is%20someone%20like%20you%2C%20someone%20who%20believed%20their%20life%20mattered.%3Cbr%3E%3Cbr%3E%F0%9F%92%9B%20Please%20save%20the%20date%3A%20May%2012%2C%202026.%3C%2Fp%3E&in_loc=https%3A%2F%2Fwww.givegreaterdc.org%2Fo%2Fluckydoganimalrescue"
+           style="background-color:#F3E5F5;color:#8E24AA;padding:12px 22px;text-decoration:none;border-radius:6px;font-weight:bold;display:inline-block;">
+          Yahoo Calendar
+        </a>
+      </td>
+      <td align="center" style="padding:0;">
+        <a href="https://outlook.office.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent&subject=Give%20Greater%20DC%20-%20Lucky%20Dog%20Animal%20Rescue&startdt=2026-05-12&enddt=2026-05-13&body=%3Cp%3EThanks%20to%20the%20incredible%20generosity%20of%20the%20RLH%20Foundation%2C%20every%20gift%20to%20Lucky%20Dog%20Animal%20Rescue%20will%20be%20matched%2C%20dollar%20for%20dollar%2C%20up%20to%20%2410%2C000.%20That%20means%3A%3Cbr%3E%3Cbr%3E-%202x%20the%20free%20vaccines%20%26amp%3B%20low%20cost%20spay%2Fneuter%20surgeries%20provided%20community%20pets%20in%20need%3Cbr%3E%3Cbr%3E-%202x%20the%20at-risk%20dogs%20and%20cats%20saved%20from%20overcrowded%20shelters%3Cbr%3E%3Cbr%3E-%202x%20the%20lifesaving%20medical%20care%20for%20animals%20who%20have%20nowhere%20else%20to%20turn%3Cbr%3E%3Cbr%3E-%202x%20the%20chances%20for%20them%20to%20find%20the%20loving%2C%20forever%20homes%20they%20deserve%3Cbr%3E%3Cbr%3EBehind%20every%20Lucky%20Dog%20and%20Lucky%20Cat%20is%20someone%20like%20you%2C%20someone%20who%20believed%20their%20life%20mattered.%3Cbr%3E%3Cbr%3E%F0%9F%92%9B%20Please%20save%20the%20date%3A%20May%2012%2C%202026.%3C%2Fp%3E&location=https%3A%2F%2Fwww.givegreaterdc.org%2Fo%2Fluckydoganimalrescue"
+           style="background-color:#FFF3E0;color:#FB8C00;padding:12px 22px;text-decoration:none;border-radius:6px;font-weight:bold;display:inline-block;">
+          Office 365
+        </a>
+      </td>
+    </tr>
+  </table>
+</div>

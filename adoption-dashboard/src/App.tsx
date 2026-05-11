@@ -428,12 +428,12 @@ useEffect(() => {
     }] : []),
     {
       title: "Animals in Foster Care",
-      value: "173",
+      value: "188",
       subtitle: (
         <div className="text-xs space-y-1">
-          <div>28 dogs in boarding</div>
-          <div>8 cats at PetSmart</div>
-          <div>18 cats at Meow Maison</div>
+          <div>24 dogs in boarding</div>
+          <div>6 cats at PetSmart</div>
+          <div>19 cats at Meow Maison</div>
         </div>
       ),
       trend: "up",
@@ -445,21 +445,21 @@ useEffect(() => {
     },
     {
       title: "Animals in Care VA",
-      value: "226",
+      value: "239",
       subtitle: (
         <div className="flex gap-4 mt-1">
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-orange-400"></div>
-            <span className="text-xs font-medium">134 dogs</span>
+            <span className="text-xs font-medium">132 dogs</span>
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-orange-300"></div>
-            <span className="text-xs font-medium">92 cats</span>
+            <span className="text-xs font-medium">107 cats</span>
           </div>
         </div>
       ),
-      comparison: "17%",
-      comparisonText: "vs last week (193)",
+      comparison: "5%",
+      comparisonText: "vs last week (226)",
       trend: "down",
       icon: MapPin,
       bgColor: "bg-orange-50",
@@ -469,12 +469,12 @@ useEffect(() => {
     },
     {
       title: "Animals in Care SC",
-      value: "107",
+      value: "127",
       subtitle: (
         <div className="flex gap-4 mt-1">
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-pink-400"></div>
-            <span className="text-xs font-medium">68 dogs</span>
+            <span className="text-xs font-medium">88 dogs</span>
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-pink-300"></div>
@@ -482,8 +482,8 @@ useEffect(() => {
           </div>
         </div>
       ),
-      comparison: "-27%",
-      comparisonText: "vs last week (148)",
+      comparison: "19%",
+      comparisonText: "vs last week (107)",
       trend: "up",
       icon: MapPin,
       bgColor: "bg-pink-50",
