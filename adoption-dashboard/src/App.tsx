@@ -440,7 +440,7 @@ const reportDate = useMemo(() => {
     }] : []),
     {
       title: "Animals in Foster Care",
-      value: "188",
+      value: "264",
       subtitle: (
         <div className="text-xs space-y-1">
           <div>26 dogs in boarding</div>
