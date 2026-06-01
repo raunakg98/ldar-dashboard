@@ -164,6 +164,18 @@ function computeMonthlyBreakdown(yearOverYearData: MonthlyComparisonPoint[], yea
   });
 }
 
+function getEffectiveReportDate(today: Date = new Date()) {
+  // Normalize to local date so time-of-day does not matter
+  const localToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
+  // If today is the 1st, use the last day of the previous month
+  if (localToday.getDate() === 1) {
+    return new Date(localToday.getFullYear(), localToday.getMonth(), 0);
+  }
+
+  return localToday;
+}
+
 const DashboardCards = () => {
   // ===== State Management =====
   const [speciesRows, setSpeciesRows] = useState<SpeciesRow[]>([]);
@@ -220,13 +232,13 @@ useEffect(() => {
 }, []);
   
   // ===== Dynamic Report Date Based on Selected Year =====
-  const reportDate = useMemo(() => {
-    if (selectedYear === 2025) {
-      return new Date(2025, 11, 31); // December 31, 2025
-    } else {
-      return new Date(); // Current date for 2026
-    }
-  }, [selectedYear]);
+const reportDate = useMemo(() => {
+  if (selectedYear === 2025) {
+    return new Date(2025, 11, 31); // December 31, 2025
+  }
+
+  return getEffectiveReportDate(); // 2026 dynamic reporting date
+}, [selectedYear]);
   
   const cutoffLabel = reportDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
   const currentMonth = reportDate.getMonth(); // 0-11
