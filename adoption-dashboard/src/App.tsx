@@ -466,7 +466,7 @@ const reportDate = useMemo(() => {
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-orange-300"></div>
-            <span className="text-xs font-medium">1151 cats</span>
+            <span className="text-xs font-medium">151 cats</span>
           </div>
         </div>
       ),
