@@ -472,7 +472,7 @@ const reportDate = useMemo(() => {
       ),
       comparison: "17%",
       comparisonText: "vs last week (264)",
-      trend: "down",
+      trend: "up",
       icon: MapPin,
       bgColor: "bg-orange-50",
       textColor: "text-orange-900",
