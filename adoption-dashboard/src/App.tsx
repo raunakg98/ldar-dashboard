@@ -239,6 +239,15 @@ const reportDate = useMemo(() => {
 
   return getEffectiveReportDate(); // 2026 dynamic reporting date
 }, [selectedYear]);
+
+
+// const reportDate = useMemo(() => {
+//   if (selectedYear === 2025) {
+//     return new Date(2025, 11, 31); // December 31, 2025
+//   } else {
+//     return new Date(); // Current date for 2026
+//   }
+// }, [selectedYear]);
   
   const cutoffLabel = reportDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
   const currentMonth = reportDate.getMonth(); // 0-11
@@ -440,12 +449,12 @@ const reportDate = useMemo(() => {
     }] : []),
     {
       title: "Animals in Foster Care",
-      value: "264",
+      value: "239",
       subtitle: (
         <div className="text-xs space-y-1">
-          <div>26 dogs in boarding</div>
+          <div>24 dogs in boarding</div>
           <div>10 cats at PetSmart</div>
-          <div>19 cats at Meow Maison</div>
+          <div>24 cats at Meow Maison</div>
         </div>
       ),
       trend: "up",
@@ -457,22 +466,22 @@ const reportDate = useMemo(() => {
     },
     {
       title: "Animals in Care VA",
-      value: "309",
+      value: "300",
       subtitle: (
         <div className="flex gap-4 mt-1">
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-orange-400"></div>
-            <span className="text-xs font-medium">158 dogs</span>
+            <span className="text-xs font-medium">151 dogs</span>
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-orange-300"></div>
-            <span className="text-xs font-medium">151 cats</span>
+            <span className="text-xs font-medium">149 cats</span>
           </div>
         </div>
       ),
-      comparison: "17%",
-      comparisonText: "vs last week (264)",
-      trend: "up",
+      comparison: "-2.9%",
+      comparisonText: "vs last week (309)",
+      trend: "down",
       icon: MapPin,
       bgColor: "bg-orange-50",
       textColor: "text-orange-900",
@@ -481,21 +490,21 @@ const reportDate = useMemo(() => {
     },
     {
       title: "Animals in Care SC",
-      value: "106",
+      value: "168",
       subtitle: (
         <div className="flex gap-4 mt-1">
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-pink-400"></div>
-            <span className="text-xs font-medium">61 dogs</span>
+            <span className="text-xs font-medium">91 dogs</span>
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-pink-300"></div>
-            <span className="text-xs font-medium">45 cats</span>
+            <span className="text-xs font-medium">71 cats</span>
           </div>
         </div>
       ),
-      comparison: "-43%",
-      comparisonText: "vs last week (184)",
+      comparison: "58.5%",
+      comparisonText: "vs last week (106)",
       trend: "up",
       icon: MapPin,
       bgColor: "bg-pink-50",
