@@ -471,11 +471,11 @@ const reportDate = useMemo(() => {
         <div className="flex gap-4 mt-1">
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-orange-400"></div>
-            <span className="text-xs font-medium">169 dogs</span>
+            <span className="text-xs font-medium">169 cats</span>
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-orange-300"></div>
-            <span className="text-xs font-medium">157 cats</span>
+            <span className="text-xs font-medium">157 dogs</span>
           </div>
         </div>
       ),
