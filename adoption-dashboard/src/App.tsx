@@ -449,12 +449,12 @@ const reportDate = useMemo(() => {
     }] : []),
     {
       title: "Animals in Foster Care",
-      value: "217",
+      value: "249",
       subtitle: (
         <div className="text-xs space-y-1">
-          <div>29 dogs in boarding</div>
-          <div>19 cats at PetSmart</div>
-          <div>22 cats at Meow Maison</div>
+          <div>30 dogs in boarding</div>
+          <div>8 cats at PetSmart</div>
+          <div>18 cats at Meow Maison</div>
         </div>
       ),
       trend: "up",
@@ -466,21 +466,21 @@ const reportDate = useMemo(() => {
     },
     {
       title: "Animals in Care VA",
-      value: "291",
+      value: "249",
       subtitle: (
         <div className="flex gap-4 mt-1">
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-orange-400"></div>
-            <span className="text-xs font-medium">160 cats</span>
+            <span className="text-xs font-medium">134 cats</span>
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-orange-300"></div>
-            <span className="text-xs font-medium">131 dogs</span>
+            <span className="text-xs font-medium">115 dogs</span>
           </div>
         </div>
       ),
-      comparison: "-2%",
-      comparisonText: "vs last week (297)",
+      comparison: "-14%",
+      comparisonText: "vs last week (249)",
       trend: "up",
       icon: MapPin,
       bgColor: "bg-orange-50",
@@ -490,22 +490,22 @@ const reportDate = useMemo(() => {
     },
     {
       title: "Animals in Care SC",
-      value: "103",
+      value: "168",
       subtitle: (
         <div className="flex gap-4 mt-1">
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-pink-400"></div>
-            <span className="text-xs font-medium">63 dogs</span>
+            <span className="text-xs font-medium">101 dogs</span>
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-pink-300"></div>
-            <span className="text-xs font-medium">40 cats</span>
+            <span className="text-xs font-medium">67 cats</span>
           </div>
         </div>
       ),
-      comparison: "-8%",
-      comparisonText: "vs last week (113)",
-      trend: "down",
+      comparison: "63%",
+      comparisonText: "vs last week (103)",
+      trend: "up",
       icon: MapPin,
       bgColor: "bg-pink-50",
       textColor: "text-pink-900",
