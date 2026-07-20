@@ -490,7 +490,7 @@ const reportDate = useMemo(() => {
         <div className="text-xs space-y-1">
           <div>25 dogs in boarding</div>
           <div>7 cats at PetSmart</div>
-          <div>18 cats at Meow Maison</div>
+          <div>22 cats at Meow Maison</div>
         </div>
       ),
       trend: "up",
