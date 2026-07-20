@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import type { ReactNode } from 'react';
 import Papa from 'papaparse';
 import type { ParseResult } from 'papaparse';
 import { TrendingUp, TrendingDown, Heart, Calendar, MapPin, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -26,6 +27,27 @@ type MonthlyComparisonPoint = {
   total2024: number;
   total2025: number;
   total2026: number;
+};
+
+
+type TrendDirection = 'up' | 'down';
+
+type KeyMetric = {
+  title: string;
+  value: string;
+  subtitle: ReactNode;
+  comparison?: string;
+  comparisonText?: string;
+  trend?: TrendDirection;
+  trendColor: string;
+  secondaryComparison?: string;
+  secondaryComparisonText?: string;
+  secondaryTrend?: TrendDirection;
+  secondaryTrendColor?: string;
+  icon: typeof Heart;
+  bgColor: string;
+  textColor: string;
+  valueColor: string;
 };
 
 // function formatInt(n: number | undefined) {
@@ -277,15 +299,15 @@ const reportDate = useMemo(() => {
   
   const ytdCurrent = findYTDTotal(currentYearStr);
   const ytdPrev = findYTDTotal(prevYearStr);
-  const ytd2024 = findYTDTotal('2024');
-
   const ytdPctVsPrev =
-    ytdCurrent != null && ytdPrev
+    ytdCurrent != null && ytdPrev != null && ytdPrev !== 0
       ? Math.round(((ytdCurrent - ytdPrev) / ytdPrev) * 100)
       : undefined;
 
+  // Used by the first card on the 2026 tab for a second YTD comparison.
+  const ytd2024 = findYTDTotal('2024');
   const ytdPctVs2024 =
-    ytdCurrent != null && ytd2024
+    ytdCurrent != null && ytd2024 != null && ytd2024 !== 0
       ? Math.round(((ytdCurrent - ytd2024) / ytd2024) * 100)
       : undefined;
   
@@ -436,16 +458,16 @@ const reportDate = useMemo(() => {
       subtitle: `through ${cutoffLabel}`,
       comparison: ytdPctVsPrev != null ? `${ytdPctVsPrev > 0 ? '+' : ''}${ytdPctVsPrev}%` : undefined,
       comparisonText: ytdPrev != null ? `vs 2025 YTD (${formatInt(ytdPrev)})` : undefined,
+      trend: ytdPctVsPrev != null ? (ytdPctVsPrev >= 0 ? 'up' : 'down') : 'up',
+      trendColor: ytdPctVsPrev != null ? (ytdPctVsPrev >= 0 ? "text-green-600" : "text-red-600") : "text-green-600",
       secondaryComparison: ytdPctVs2024 != null ? `${ytdPctVs2024 > 0 ? '+' : ''}${ytdPctVs2024}%` : undefined,
       secondaryComparisonText: ytd2024 != null ? `vs 2024 YTD (${formatInt(ytd2024)})` : undefined,
-      secondaryTrend: ytdPctVs2024 != null ? (ytdPctVs2024 >= 0 ? 'up' : 'down') : 'up',
-      secondaryTrendColor: ytdPctVs2024 != null ? (ytdPctVs2024 >= 0 ? "text-green-600" : "text-red-600") : "text-green-600",
-      trend: ytdPctVsPrev != null ? (ytdPctVsPrev >= 0 ? 'up' : 'down') : 'up',
+      secondaryTrend: ytdPctVs2024 != null ? (ytdPctVs2024 >= 0 ? 'up' : 'down') : undefined,
+      secondaryTrendColor: ytdPctVs2024 != null ? (ytdPctVs2024 >= 0 ? "text-green-600" : "text-red-600") : undefined,
       icon: Heart,
       bgColor: "bg-blue-50",
       textColor: "text-blue-900",
-      valueColor: "text-blue-600",
-      trendColor: ytdPctVsPrev != null ? (ytdPctVsPrev >= 0 ? "text-green-600" : "text-red-600") : "text-green-600"
+      valueColor: "text-blue-600"
     },
     // Conditionally add current month card if data exists
     ...(currentMonthCurrent && currentMonthCurrent > 0 ? [{
@@ -528,7 +550,9 @@ const reportDate = useMemo(() => {
     }
   ];
   
-  const keyMetrics = selectedYear === 2025 ? keyMetrics2025 : keyMetrics2026;
+  const keyMetrics: KeyMetric[] = selectedYear === 2025
+    ? keyMetrics2025 as KeyMetric[]
+    : keyMetrics2026 as KeyMetric[];
   
   // ===== 2025 Static Data =====
   const monthly2025CatsVsDogs = [
@@ -686,13 +710,15 @@ const reportDate = useMemo(() => {
                   <span className="text-xs text-gray-500">{metric.comparisonText}</span>
                 </div>
               )}
-              {'secondaryComparison' in metric && metric.secondaryComparison && (
+              {metric.secondaryComparison && metric.secondaryTrendColor && (
                 <div className="flex items-center space-x-1 mt-1">
                   {metric.secondaryTrend === 'up'
                     ? <TrendingUp className={`h-4 w-4 ${metric.secondaryTrendColor}`} />
                     : <TrendingDown className={`h-4 w-4 ${metric.secondaryTrendColor}`} />
                   }
-                  <span className={`text-sm font-medium ${metric.secondaryTrendColor}`}>{metric.secondaryComparison}</span>
+                  <span className={`text-sm font-medium ${metric.secondaryTrendColor}`}>
+                    {metric.secondaryComparison}
+                  </span>
                   <span className="text-xs text-gray-500">{metric.secondaryComparisonText}</span>
                 </div>
               )}
