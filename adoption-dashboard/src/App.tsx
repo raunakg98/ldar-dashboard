@@ -18,12 +18,15 @@ type YTDPoint = { year: string; dogs: number; cats: number };
 
 type MonthlyComparisonPoint = {
   month: string;
+  dogs2023: number;
+  cats2023: number;
   dogs2024: number;
   cats2024: number;
   dogs2025: number;
   cats2025: number;
   dogs2026: number;
   cats2026: number;
+  total2023: number;
   total2024: number;
   total2025: number;
   total2026: number;
@@ -131,18 +134,22 @@ function computeMonthlyComparisonMultiYear(rows: SpeciesRow[], years: string[]):
   // Build the comparison data
   return MONTHS.map((monthName, idx) => {
     const m = idx + 1;
+    const data2023 = agg['2023']?.[m] || { dogs: 0, cats: 0 };
     const data2024 = agg['2024']?.[m] || { dogs: 0, cats: 0 };
     const data2025 = agg['2025']?.[m] || { dogs: 0, cats: 0 };
     const data2026 = agg['2026']?.[m] || { dogs: 0, cats: 0 };
     
     return {
       month: monthName,
+      dogs2023: data2023.dogs,
+      cats2023: data2023.cats,
       dogs2024: data2024.dogs,
       cats2024: data2024.cats,
       dogs2025: data2025.dogs,
       cats2025: data2025.cats,
       dogs2026: data2026.dogs,
       cats2026: data2026.cats,
+      total2023: data2023.dogs + data2023.cats,
       total2024: data2024.dogs + data2024.cats,
       total2025: data2025.dogs + data2025.cats,
       total2026: data2026.dogs + data2026.cats,
@@ -278,7 +285,7 @@ const reportDate = useMemo(() => {
   
   // ===== Compute Data =====
   const ytdSpeciesData = useMemo(() => computeYTDBySpecies(speciesRows, reportDate), [speciesRows, reportDate]);
-  const yearOverYearData = useMemo(() => computeMonthlyComparisonMultiYear(speciesRows, ['2024', '2025', '2026']), [speciesRows]);
+  const yearOverYearData = useMemo(() => computeMonthlyComparisonMultiYear(speciesRows, ['2023', '2024', '2025', '2026']), [speciesRows]);
   
   type ChartYTDPoint = YTDPoint & { total: number; totalYTD: number };
   const ytdSpeciesForChart: ChartYTDPoint[] = useMemo(() => {
@@ -324,7 +331,7 @@ const reportDate = useMemo(() => {
   // ===== Visualization Definitions =====
   const visualizations2025 = [
     { id: 'speciesYTD', title: 'YTD Adoptions by Species', subtitle: 'Dogs vs Cats (YTD) + YTD Total (gray) from CSV' },
-    { id: 'yearComparison', title: '2024 vs 2025 Monthly Comparison', subtitle: 'Year-over-year adoption trends by species' },
+    { id: 'yearComparison', title: '2023 vs 2024 vs 2025 Monthly Comparison', subtitle: 'Three-year monthly adoption trends by species' },
     { id: 'predictions', title: 'Seasonality & 2025 Analysis', subtitle: 'Historical patterns and 2025 actual data' },
     { id: 'adoptions', title: 'Monthly Adoptions Breakdown', subtitle: '2025 Cats vs Dogs Trends' },
     { id: 'vaccines', title: 'Vaccine Clinics Performance', subtitle: 'All-Time Analysis' }
@@ -332,7 +339,7 @@ const reportDate = useMemo(() => {
   
   const visualizations2026 = [
     { id: 'speciesYTD', title: 'YTD Adoptions by Species', subtitle: 'Dogs vs Cats (YTD) including 2026 data' },
-    { id: 'yearComparison', title: '2025 vs 2026 Monthly Comparison', subtitle: 'Year-over-year adoption trends' },
+    { id: 'yearComparison', title: '2024 vs 2025 vs 2026 Monthly Comparison', subtitle: 'Three-year monthly adoption trends' },
     { id: 'adoptions', title: 'Monthly Adoptions Breakdown', subtitle: '2026 Cats vs Dogs Trends' },
     { id: 'vaccines', title: 'Vaccine Clinics Performance', subtitle: '2026 Clinics + 2025 Reference' }
   ];
@@ -448,7 +455,7 @@ const reportDate = useMemo(() => {
     }
   ];
   
-///////////////// ADD 2026 DATA HERE !!!!!!!!!!! /////////////////
+///////////////// AD 2026 DATA HERE !!!!!!!!!!! /////////////////
 
 
   const keyMetrics2026 = [
@@ -485,12 +492,12 @@ const reportDate = useMemo(() => {
     }] : []),
     {
       title: "Animals in Foster Care",
-      value: "221",
+      value: "206",
       subtitle: (
         <div className="text-xs space-y-1">
-          <div>32 dogs in boarding</div>
-          <div>8 cats at PetSmart</div>
-          <div>20 cats at Meow Maison</div>
+          <div>25 dogs in boarding</div>
+          <div>7 cats at PetSmart</div>
+          <div>18 cats at Meow Maison</div>
         </div>
       ),
       trend: "up",
@@ -502,7 +509,7 @@ const reportDate = useMemo(() => {
     },
     {
       title: "Animals in Care VA",
-      value: "290",
+      value: "262",
       subtitle: (
         <div className="flex gap-4 mt-1">
           <div className="flex items-center gap-1.5">
@@ -515,8 +522,8 @@ const reportDate = useMemo(() => {
           </div>
         </div>
       ),
-      comparison: "10%",
-      comparisonText: "vs last week (262)",
+      comparison: "-7.09%",
+      comparisonText: "vs last week (282)",
       trend: "down",
       icon: MapPin,
       bgColor: "bg-orange-50",
@@ -526,21 +533,21 @@ const reportDate = useMemo(() => {
     },
     {
       title: "Animals in Care SC",
-      value: "127",
+      value: "181",
       subtitle: (
         <div className="flex gap-4 mt-1">
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-pink-400"></div>
-            <span className="text-xs font-medium">93 dogs</span>
+            <span className="text-xs font-medium">121 dogs</span>
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-pink-300"></div>
-            <span className="text-xs font-medium">34 cats</span>
+            <span className="text-xs font-medium">60 cats</span>
           </div>
         </div>
       ),
-      comparison: "-29%",
-      comparisonText: "vs last week (181)",
+      comparison: "53%",
+      comparisonText: "vs last week (118)",
       trend: "up",
       icon: MapPin,
       bgColor: "bg-pink-50",
@@ -796,7 +803,7 @@ const reportDate = useMemo(() => {
           <div className="bg-gray-50 p-6 rounded-lg">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold text-gray-900">
-                {selectedYear === 2025 ? '2024 vs 2025 Monthly Adoptions' : '2025 vs 2026 Monthly Adoptions'}
+                {selectedYear === 2025 ? '2023 vs 2024 vs 2025 Monthly Adoptions' : '2024 vs 2025 vs 2026 Monthly Adoptions'}
               </h3>
               
               <div className="flex gap-2 bg-white p-1 rounded-lg shadow-sm border border-gray-200">
@@ -840,12 +847,15 @@ const reportDate = useMemo(() => {
                 <Tooltip 
                   formatter={(value: any, name: string) => {
                     const label = 
+                      name === 'dogs2023' ? 'Dogs 2023' :
                       name === 'dogs2024' ? 'Dogs 2024' :
                       name === 'dogs2025' ? 'Dogs 2025' :
                       name === 'dogs2026' ? 'Dogs 2026' :
+                      name === 'cats2023' ? 'Cats 2023' :
                       name === 'cats2024' ? 'Cats 2024' :
                       name === 'cats2025' ? 'Cats 2025' :
                       name === 'cats2026' ? 'Cats 2026' :
+                      name === 'total2023' ? 'Total 2023' :
                       name === 'total2024' ? 'Total 2024' :
                       name === 'total2025' ? 'Total 2025' :
                       name === 'total2026' ? 'Total 2026' : name;
@@ -858,18 +868,21 @@ const reportDate = useMemo(() => {
                   <>
                     {comparisonFilter === 'total' && (
                       <>
+                        <Bar dataKey="total2023" fill="#f46767" name="Total 2023" />
                         <Bar dataKey="total2024" fill="#3b82f6" name="Total 2024" />
                         <Bar dataKey="total2025" fill="#10b981" name="Total 2025" />
                       </>
                     )}
                     {comparisonFilter === 'dogs' && (
                       <>
+                        <Bar dataKey="dogs2023" fill="#f46767" name="Dogs 2023" />
                         <Bar dataKey="dogs2024" fill="#3b82f6" name="Dogs 2024" />
                         <Bar dataKey="dogs2025" fill="#10b981" name="Dogs 2025" />
                       </>
                     )}
                     {comparisonFilter === 'cats' && (
                       <>
+                        <Bar dataKey="cats2023" fill="#f46767" name="Cats 2023" />
                         <Bar dataKey="cats2024" fill="#3b82f6" name="Cats 2024" />
                         <Bar dataKey="cats2025" fill="#10b981" name="Cats 2025" />
                       </>
@@ -881,18 +894,21 @@ const reportDate = useMemo(() => {
                   <>
                     {comparisonFilter === 'total' && (
                       <>
+                        <Bar dataKey="total2024" fill="#f46767" name="Total 2024" />
                         <Bar dataKey="total2025" fill="#3b82f6" name="Total 2025" />
                         <Bar dataKey="total2026" fill="#10b981" name="Total 2026" />
-                      </>
+                      </> 
                     )}
                     {comparisonFilter === 'dogs' && (
                       <>
+                        <Bar dataKey="dogs2024" fill="#f46767" name="Dogs 2024" />
                         <Bar dataKey="dogs2025" fill="#3b82f6" name="Dogs 2025" />
                         <Bar dataKey="dogs2026" fill="#10b981" name="Dogs 2026" />
                       </>
                     )}
                     {comparisonFilter === 'cats' && (
                       <>
+                        <Bar dataKey="cats2024" fill="#f46767" name="Cats 2024" />
                         <Bar dataKey="cats2025" fill="#3b82f6" name="Cats 2025" />
                         <Bar dataKey="cats2026" fill="#10b981" name="Cats 2026" />
                       </>
@@ -902,7 +918,7 @@ const reportDate = useMemo(() => {
               </ComposedChart>
             </ResponsiveContainer>
             <div className="text-xs text-gray-600 mt-3">
-              <span className="font-semibold">Data source:</span> Computed from adoptions_by_species.csv. Blue = previous year, Green = current year.
+              <span className="font-semibold">Data source:</span> Computed from adoptions_by_species.csv. Gray = earliest year, Blue = middle year, Green = latest year.
             </div>
           </div>
         )}
