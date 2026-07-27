@@ -533,21 +533,21 @@ const reportDate = useMemo(() => {
     },
     {
       title: "Animals in Care SC",
-      value: "181",
+      value: "127",
       subtitle: (
         <div className="flex gap-4 mt-1">
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-pink-400"></div>
-            <span className="text-xs font-medium">121 dogs</span>
+            <span className="text-xs font-medium">93 dogs</span>
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-pink-300"></div>
-            <span className="text-xs font-medium">60 cats</span>
+            <span className="text-xs font-medium">32 cats</span>
           </div>
         </div>
       ),
-      comparison: "53%",
-      comparisonText: "vs last week (118)",
+      comparison: "-30%",
+      comparisonText: "vs last week (181)",
       trend: "up",
       icon: MapPin,
       bgColor: "bg-pink-50",
