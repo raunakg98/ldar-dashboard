@@ -495,7 +495,7 @@ const reportDate = useMemo(() => {
       value: "215",
       subtitle: (
         <div className="text-xs space-y-1">
-          <div>29 dogs in boarding</div>
+          <div>27 dogs in boarding</div>
           <div>10 cats at PetSmart</div>
           <div>21 cats at Meow Maison</div>
         </div>
