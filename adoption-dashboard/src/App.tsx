@@ -495,9 +495,9 @@ const reportDate = useMemo(() => {
       value: "215",
       subtitle: (
         <div className="text-xs space-y-1">
-          <div>27 dogs in boarding</div>
-          <div>10 cats at PetSmart</div>
-          <div>21 cats at Meow Maison</div>
+          <div>22 dogs in boarding</div>
+          <div>8 cats at PetSmart</div>
+          <div>23 cats at Meow Maison</div>
         </div>
       ),
       trend: "up",
@@ -509,12 +509,12 @@ const reportDate = useMemo(() => {
     },
     {
       title: "Animals in Care VA",
-      value: "277",
+      value: "268",
       subtitle: (
         <div className="flex gap-4 mt-1">
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-orange-400"></div>
-            <span className="text-xs font-medium">149 cats</span>
+            <span className="text-xs font-medium">140 cats</span>
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-orange-300"></div>
@@ -522,7 +522,7 @@ const reportDate = useMemo(() => {
           </div>
         </div>
       ),
-      comparison: "-10%",
+      comparison: "-3.2%",
       comparisonText: "vs last week (277)",
       trend: "down",
       icon: MapPin,
@@ -533,22 +533,22 @@ const reportDate = useMemo(() => {
     },
     {
       title: "Animals in Care SC",
-      value: "177",
+      value: "120",
       subtitle: (
         <div className="flex gap-4 mt-1">
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-pink-400"></div>
-            <span className="text-xs font-medium">123 dogs</span>
+            <span className="text-xs font-medium">85 dogs</span>
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-pink-300"></div>
-            <span className="text-xs font-medium">54 cats</span>
+            <span className="text-xs font-medium">35 cats</span>
           </div>
         </div>
       ),
-      comparison: "39%",
-      comparisonText: "vs last week (127)",
-      trend: "up",
+      comparison: "-32%",
+      comparisonText: "vs last week (177)",
+      trend: "down",
       icon: MapPin,
       bgColor: "bg-pink-50",
       textColor: "text-pink-900",
