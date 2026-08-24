@@ -492,12 +492,12 @@ const reportDate = useMemo(() => {
     }] : []),
     {
       title: "Animals in Foster Care",
-      value: "193",
+      value: "194",
       subtitle: (
         <div className="text-xs space-y-1">
-          <div>20 dogs in boarding</div>
-          <div>6 cats at PetSmart</div>
-          <div>24 cats at Meow Maison</div>
+          <div>19 dogs in boarding</div>
+          <div>14 cats at PetSmart</div>
+          <div>19 cats at Meow Maison</div>
         </div>
       ),
       trend: "up",
@@ -514,16 +514,16 @@ const reportDate = useMemo(() => {
         <div className="flex gap-4 mt-1">
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-orange-400"></div>
-            <span className="text-xs font-medium">128 cats</span>
+            <span className="text-xs font-medium">129 cats</span>
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-orange-300"></div>
-            <span className="text-xs font-medium">119 dogs</span>
+            <span className="text-xs font-medium">118 dogs</span>
           </div>
         </div>
       ),
-      comparison: "-7.8%",
-      comparisonText: "vs last week (268)",
+      comparison: "0%",
+      comparisonText: "vs last week (247)",
       trend: "down",
       icon: MapPin,
       bgColor: "bg-orange-50",
@@ -533,21 +533,21 @@ const reportDate = useMemo(() => {
     },
     {
       title: "Animals in Care SC",
-      value: "165",
+      value: "146",
       subtitle: (
         <div className="flex gap-4 mt-1">
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-pink-400"></div>
-            <span className="text-xs font-medium">120 dogs</span>
+            <span className="text-xs font-medium">84 dogs</span>
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-pink-300"></div>
-            <span className="text-xs font-medium">45 cats</span>
+            <span className="text-xs font-medium">62 cats</span>
           </div>
         </div>
       ),
-      comparison: "37.5%",
-      comparisonText: "vs last week (120)",
+      comparison: "-11.5%",
+      comparisonText: "vs last week (165)",
       trend: "down",
       icon: MapPin,
       bgColor: "bg-pink-50",
