@@ -204,7 +204,68 @@ function getEffectiveReportDate(today: Date = new Date()) {
 
   return localToday;
 }
+// ===== Adoption channel breakdown (static for demo; swap for sheet data later) =====
+const CHANNEL_COLORS: Record<string, string> = {
+  'At Event': '#3b82f6',
+  'OTA':      '#ef4444',
+  'FF':       '#10b981',
+  'Cat Cafe': '#8b5cf6',
+  'Other':    '#93c5fd',
+};
 
+type ChannelSlice = { name: string; value: number };
+
+const totalChannelBreakdown: ChannelSlice[] = [
+  { name: 'At Event', value: 60.0 },
+  { name: 'OTA',      value: 11.9 },
+  { name: 'FF',       value: 4.9 },
+  { name: 'Cat Cafe', value: 5.5 },
+  { name: 'Other',    value: 17.6 },
+];
+
+const dogChannelBreakdown: ChannelSlice[] = [
+  { name: 'At Event', value: 66.4 },
+  { name: 'OTA',      value: 12.3 },
+  { name: 'FF',       value: 5.9 },
+  { name: 'Other',    value: 15.4 },
+];
+
+const catChannelBreakdown: ChannelSlice[] = [
+  { name: 'At Event', value: 51.1 },
+  { name: 'OTA',      value: 11.2 },
+  { name: 'FF',       value: 3.7 },
+  { name: 'Cat Cafe', value: 13.3 },
+  { name: 'Other',    value: 20.8 },
+];
+
+
+function ChannelDonut({ title, data }: { title: string; data: ChannelSlice[] }) {
+  return (
+    <div className="bg-gray-50 p-6 rounded-lg">
+      <h3 className="text-base font-semibold text-gray-900 mb-4">{title}</h3>
+            <ResponsiveContainer width="100%" height={300}>
+        <PieChart margin={{ top: 10, right: 40, bottom: 10, left: 40 }}>
+          <Pie
+            data={data}
+            cx="50%"
+            cy="50%"
+            innerRadius={45}
+            outerRadius={72}
+            paddingAngle={1}
+            dataKey="value"
+            labelLine={true}
+            label={({ name, value }: any) => `${name}: ${value}%`}
+          >
+            {data.map((entry, index) => (
+              <Cell key={`cell-${index}`} fill={CHANNEL_COLORS[entry.name] ?? '#9ca3af'} />
+            ))}
+          </Pie>
+          <Tooltip formatter={(value: any, name: any) => [`${value}%`, name]} />
+        </PieChart>
+      </ResponsiveContainer>
+    </div>
+  );
+}
 const DashboardCards = () => {
   // ===== State Management =====
   const [speciesRows, setSpeciesRows] = useState<SpeciesRow[]>([]);
@@ -340,6 +401,7 @@ const reportDate = useMemo(() => {
   const visualizations2026 = [
     { id: 'speciesYTD', title: 'YTD Adoptions by Species', subtitle: 'Dogs vs Cats (YTD) including 2026 data' },
     { id: 'yearComparison', title: '2024 vs 2025 vs 2026 Monthly Comparison', subtitle: 'Three-year monthly adoption trends' },
+    { id: 'channels', title: 'Adoption Channel Breakdown', subtitle: 'Where adoptions happen -- overall, dogs, and cats' },
     { id: 'adoptions', title: 'Monthly Adoptions Breakdown', subtitle: '2026 Cats vs Dogs Trends' },
     { id: 'vaccines', title: 'Vaccine Clinics Performance', subtitle: '2026 Clinics + 2025 Reference' }
   ];
@@ -492,12 +554,12 @@ const reportDate = useMemo(() => {
     }] : []),
     {
       title: "Animals in Foster Care",
-      value: "194",
+      value: "179",
       subtitle: (
         <div className="text-xs space-y-1">
-          <div>19 dogs in boarding</div>
-          <div>14 cats at PetSmart</div>
-          <div>19 cats at Meow Maison</div>
+          <div>12 dogs in boarding</div>
+          <div>10 cats at PetSmart</div>
+          <div>24 cats at Meow Maison</div>
         </div>
       ),
       trend: "up",
@@ -509,20 +571,20 @@ const reportDate = useMemo(() => {
     },
     {
       title: "Animals in Care VA",
-      value: "247",
+      value: "227",
       subtitle: (
         <div className="flex gap-4 mt-1">
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-orange-400"></div>
-            <span className="text-xs font-medium">129 cats</span>
+            <span className="text-xs font-medium">86 cats</span>
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-orange-300"></div>
-            <span className="text-xs font-medium">118 dogs</span>
+            <span className="text-xs font-medium">93 dogs</span>
           </div>
         </div>
       ),
-      comparison: "0%",
+      comparison: "-8.1%",
       comparisonText: "vs last week (247)",
       trend: "down",
       icon: MapPin,
@@ -533,22 +595,22 @@ const reportDate = useMemo(() => {
     },
     {
       title: "Animals in Care SC",
-      value: "146",
+      value: "189",
       subtitle: (
         <div className="flex gap-4 mt-1">
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-pink-400"></div>
-            <span className="text-xs font-medium">84 dogs</span>
+            <span className="text-xs font-medium">119 dogs</span>
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-pink-300"></div>
-            <span className="text-xs font-medium">62 cats</span>
+            <span className="text-xs font-medium">70 cats</span>
           </div>
         </div>
       ),
-      comparison: "-11.5%",
-      comparisonText: "vs last week (165)",
-      trend: "down",
+      comparison: "29%",
+      comparisonText: "vs last week (189)",
+      trend: "up",
       icon: MapPin,
       bgColor: "bg-pink-50",
       textColor: "text-pink-900",
@@ -922,8 +984,22 @@ const reportDate = useMemo(() => {
             </div>
           </div>
         )}
-        
-        {/* 3) Seasonality & Predictions - 2025 ONLY */}
+        {/* 3) Adoption Channel Breakdown — 2026 ONLY */}
+        {selectedYear === 2026 && currentViz.id === 'channels' && (
+          <div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <ChannelDonut title="Total Adoptions Breakdown" data={totalChannelBreakdown} />
+              <ChannelDonut title="Dog Adoptions Breakdown" data={dogChannelBreakdown} />
+              <ChannelDonut title="Cat Adoptions Breakdown" data={catChannelBreakdown} />
+            </div>
+
+            <div className="text-xs text-gray-600 mt-3">
+              <span className="font-semibold">Data source :</span> YTD Adoptions through Aug 16 2026. At Event, OTA,
+              FF (foster fail), Cat Cafe, and Other. Percentages are share of adoptions within each group.
+            </div>
+          </div>
+        )}
+        {/* 4) Seasonality & Predictions - 2025 ONLY */}
         {selectedYear === 2025 && currentViz.id === 'predictions' && (
           <div className="bg-gray-50 p-6 rounded-lg">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Historical Seasonality & 2025 Actual Data</h3>
@@ -977,7 +1053,7 @@ const reportDate = useMemo(() => {
           </div>
         )}
         
-        {/* 4) Monthly Adoptions - Both 2025 and 2026 */}
+        {/* 5) Monthly Adoptions - Both 2025 and 2026 */}
         {currentViz.id === 'adoptions' && (
           <div>
             <div className="bg-gray-50 p-6 rounded-lg">
@@ -1009,7 +1085,7 @@ const reportDate = useMemo(() => {
           </div>
         )}
         
-        {/* 5) Vaccine Clinics - 2025 ONLY */}
+        {/* 6) Vaccine Clinics - 2025 ONLY */}
         {selectedYear === 2025 && currentViz.id === 'vaccines' && (
           <div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
