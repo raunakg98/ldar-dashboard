@@ -554,12 +554,12 @@ const reportDate = useMemo(() => {
     }] : []),
     {
       title: "Animals in Foster Care",
-      value: "152",
+      value: "170",
       subtitle: (
         <div className="text-xs space-y-1">
-          <div>10 dogs in boarding</div>
-          <div>3 cats at PetSmart</div>
-          <div>18 cats at Meow Maison</div>
+          <div>16 dogs in boarding</div>
+          <div>6 cats at PetSmart</div>
+          <div>23 cats at Meow Maison</div>
         </div>
       ),
       trend: "up",
@@ -571,16 +571,16 @@ const reportDate = useMemo(() => {
     },
     {
       title: "Animals in Care VA",
-      value: "185",
+      value: "216",
       subtitle: (
         <div className="flex gap-4 mt-1">
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-orange-400"></div>
-            <span className="text-xs font-medium">101 cats</span>
+            <span className="text-xs font-medium">110 cats</span>
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-orange-300"></div>
-            <span className="text-xs font-medium">84 dogs</span>
+            <span className="text-xs font-medium">116 dogs</span>
           </div>
         </div>
       ),
@@ -595,20 +595,20 @@ const reportDate = useMemo(() => {
     },
     {
       title: "Animals in Care SC",
-      value: "189",
+      value: "123",
       subtitle: (
         <div className="flex gap-4 mt-1">
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-pink-400"></div>
-            <span className="text-xs font-medium">116 dogs</span>
+            <span className="text-xs font-medium">79 dogs</span>
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-pink-300"></div>
-            <span className="text-xs font-medium">73 cats</span>
+            <span className="text-xs font-medium">44 cats</span>
           </div>
         </div>
       ),
-      comparison: "0%",
+      comparison: "-34%",
       comparisonText: "vs last week (189)",
       trend: "up",
       icon: MapPin,
